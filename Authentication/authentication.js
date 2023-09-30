@@ -139,7 +139,6 @@ function sendResetTokenEmail(companyEmail, resetToken) {
   });
 }
 
-// Function to handle user registration
 function register(req, res) {
   const {
     contact,
@@ -168,7 +167,7 @@ function register(req, res) {
       }
 
       // Check if the username (company email) is already registered
-      const companyEmailCheckQuery = 'SELECT * FROM hrms_users WHERE CompanyEmail = ?';
+      const companyEmailCheckQuery = 'SELECT * FROM hrms_users WHERE Username = ?'; // Assuming 'Username' is the column storing companyEmail
       db.query(companyEmailCheckQuery, [companyEmail], (error, companyEmailCheckResult) => {
         if (error) {
           console.error('Error during username check:', error);
@@ -176,7 +175,7 @@ function register(req, res) {
         }
 
         try {
-          if (compamyEmailCheckResult.length > 0) {
+          if (companyEmailCheckResult.length > 0) {
             console.log('Username already exists');
             return res.status(400).json({ message: 'User already exists' });
           }
@@ -197,7 +196,7 @@ function register(req, res) {
 
               // Insert the user into the database
               const insertQuery =
-                'INSERT INTO hrms_users (UserId, Username, FirstName, LastName,  ContactNo, companyEmail, Password, Designation, VerificationToken, Verified) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+                'INSERT INTO hrms_users (UserId, Username, FirstName, LastName, ContactNo, Password, Designation, VerificationToken, Verified) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
               db.query(
                 insertQuery,
                 [
