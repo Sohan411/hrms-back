@@ -196,7 +196,7 @@ function register(req, res) {
 
               // Insert the user into the database
               const insertQuery =
-                'INSERT INTO hrms_users (UserId, Username, FirstName, LastName, ContactNo, Password, Designation, VerificationToken, Verified) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+                'INSERT INTO hrms_users (UserId, Username, FirstName, LastName, ContactNo, Password, Designation, VerificationToken, Verified,CompanyEmail) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
               db.query(
                 insertQuery,
                 [
@@ -208,7 +208,8 @@ function register(req, res) {
                   hashedPassword,
                   designation,
                   verificationToken,
-                  '0'
+                  '0',
+                  companyEmail
                 ],
                 (error, insertResult) => {
                   if (error) {
