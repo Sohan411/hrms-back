@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const authentication = require('./Authentication/authentication');
 const sa = require('./SuperAdmin/SuperAdmin');
+const dashboard = require('./Dash/dashboard');
 
 
 // Registration route
@@ -22,5 +23,8 @@ router.put('/users/:UserId/block', authentication.Block);
 //SuperAdmin
 router.post('/addUser', sa.add_User);
 router.get('/getUserDetails', sa.userdetails);
+
+//Dashboard
+router.post('/leave', dashboard.internLeave)
 
 module.exports = router;

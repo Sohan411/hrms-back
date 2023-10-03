@@ -105,7 +105,7 @@ function add_User(req, res) {
               hashedPassword,
               designation,
               verificationToken,
-              '0',
+              '1',
               dateOfBirth,
               totalWorkingDays,
               supervisor
