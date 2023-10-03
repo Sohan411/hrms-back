@@ -149,6 +149,7 @@ function register(req, res) {
     companyEmail,
     designation,
     password,
+    dateOfBirth
   } = req.body;
 
   // Combine firstName and lastName to create the user's name
@@ -198,7 +199,7 @@ function register(req, res) {
 
               // Insert the user into the database
               const insertQuery =
-                'INSERT INTO hrms_users (UserId, Username, FirstName, LastName, ContactNo, Password, Designation, VerificationToken, Verified,CompanyEmail) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+                'INSERT INTO hrms_users (UserId, Username, FirstName, LastName, ContactNo, Password, Designation, VerificationToken, Verified,CompanyEmail,DOB) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
               db.query(
                 insertQuery,
                 [
@@ -211,7 +212,8 @@ function register(req, res) {
                   designation,
                   verificationToken,
                   '0',
-                  companyEmail
+                  companyEmail,
+                  dateOfBirth
                 ],
                 (error, insertResult) => {
                   if (error) {
@@ -258,6 +260,7 @@ function register_dashboard(req, res) {
     companyEmail,
     designation,
     password,
+    dateOfBirth
   } = req.body;
 
   // Check if the username (company email) is already registered
@@ -290,7 +293,7 @@ function register_dashboard(req, res) {
 
           // Insert the user into the database
           const insertQuery =
-            'INSERT INTO hrms_users (UserId, Username, FirstName, LastName, ContactNo, CompanyEmail, Password, Designation, VerificationToken, Verified) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            'INSERT INTO hrms_users (UserId, Username, FirstName, LastName, ContactNo, CompanyEmail, Password, Designation, VerificationToken, Verified, DOB) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
           db.query(
             insertQuery,
             [
@@ -303,7 +306,8 @@ function register_dashboard(req, res) {
               hashedPassword,
               designation,
               verificationToken,
-              '0'
+              '0',
+              dateOfBirth
             ],
             (error, insertResult) => {
               if (error) {
@@ -812,5 +816,6 @@ module.exports = {
   resetPassword,
   setUserOnline,
   setUserOffline,
-  Block
+  Block,
+
 };

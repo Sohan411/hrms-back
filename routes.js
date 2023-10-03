@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authentication = require('./Authentication/authentication');
+const sa = require('./SuperAdmin/SuperAdmin');
 
 
 // Registration route
@@ -17,5 +18,8 @@ router.post('/reset-password', authentication.resetPassword);
 router.put('/setUserOnline/:UserId', authentication.setUserOnline);
 router.put('/setUserOffline/:UserId', authentication.setUserOffline);
 router.put('/users/:UserId/block', authentication.Block);
+
+//SuperAdmin
+router.post('/addUser', sa.add_User);
 
 module.exports = router;
