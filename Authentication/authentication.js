@@ -448,7 +448,7 @@ function login(req, res) {
 
       const user = rows[0];
 
-      if (user.Verified === '0') {
+      if (user.verified === 0) {
         // Log the end of the function execution with an error message
         logExecution('login', tenantId, 'ERROR', 'User is not verified');
         return res.status(401).json({ message: 'User is not verified. Please verify your account.' });
