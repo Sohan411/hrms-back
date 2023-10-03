@@ -8,6 +8,8 @@ const fs = require('fs');
 const path = require('path');
 const ejs = require('ejs');
 const { v4: uuidv4 } = require('uuid');
+const { Console } = require('console');
+const { logExecution } = require('../SuperAdmin/SuperAdmin');
 
 encryptKey = "SenseLive-Hrms-Dashboard";
 
@@ -425,7 +427,7 @@ function login(req, res) {
   const tenantId = uuidv4();
 
   // Log the start of the function execution
-  logExecution('login', tenantId, 'INFO', 'User login attempt');
+  ('login', tenantId, 'INFO', 'User login attempt');
 
   // Check if the user exists in the database
   const query = 'SELECT * FROM hrms_users WHERE Username = ?';
@@ -450,12 +452,6 @@ function login(req, res) {
         // Log the end of the function execution with an error message
         logExecution('login', tenantId, 'ERROR', 'User is not verified');
         return res.status(401).json({ message: 'User is not verified. Please verify your account.' });
-      }
-
-      if (user.block === 1) {
-        // Log the end of the function execution with an error message
-        logExecution('login', tenantId, 'ERROR', 'User is blocked');
-        return res.status(401).json({ message: 'User is blocked. Please contact support.' });
       }
 
       // Compare the provided password with the hashed password in the database
@@ -491,8 +487,6 @@ function login(req, res) {
     }
   });
 }
-
-
 
 // User details endpoint
 function getUserDetails(req, res) {
@@ -737,21 +731,6 @@ function setUserOffline(req, res) {
   });
 }
 
-// Helper function to generate a unique 10-digit user ID
-function generateUserId() {
-  const userIdLength = 10;
-  let userId = '';
-
-  const characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-
-  for (let i = 0; i < userIdLength; i++) {
-    const randomIndex = Math.floor(Math.random() * characters.length);
-    userId += characters.charAt(randomIndex);
-  }
-
-  return userId;
-}
-
 function Block(req, res) {
   const { UserId } = req.params;
   const { action } = req.body;
@@ -799,6 +778,21 @@ function Block(req, res) {
       res.status(200).json({ message: successMessage });
     });
   });
+}
+
+ // Helper function to generate a unique 10-digit user ID
+ function generateUserId() {
+  const userIdLength = 10;
+  let userId = '';
+
+  const characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+
+  for (let i = 0; i < userIdLength; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    userId += characters.charAt(randomIndex);
+  }
+
+  return userId;
 }
 
 
