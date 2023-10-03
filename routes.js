@@ -21,5 +21,6 @@ router.put('/users/:UserId/block', authentication.Block);
 
 //SuperAdmin
 router.post('/addUser', sa.add_User);
+router.get('/getUserDetails', sa.userdetails);
 
 module.exports = router;

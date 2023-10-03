@@ -58,7 +58,8 @@ function add_User(req, res) {
     designation,
     password,
     dateOfBirth,
-    totalWorkingDays
+    totalWorkingDays,
+    supervisor
   } = req.body;
 
   // Check if the username (company email) is already registered
@@ -91,7 +92,7 @@ function add_User(req, res) {
 
           // Insert the user into the database
           const insertQuery =
-            'INSERT INTO hrms_users (UserId, Username, FirstName, LastName, ContactNo, CompanyEmail, Password, Designation, VerificationToken, Verified, DOB, TotalWorkingDays) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            'INSERT INTO hrms_users (UserId, Username, FirstName, LastName, ContactNo, CompanyEmail, Password, Designation, VerificationToken, Verified, DOB, TotalWorkingDays, Supervisor) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
           db.query(
             insertQuery,
             [
@@ -106,7 +107,8 @@ function add_User(req, res) {
               verificationToken,
               '0',
               dateOfBirth,
-              totalWorkingDays
+              totalWorkingDays,
+              supervisor
             ],
             (error, insertResult) => {
               if (error) {
@@ -135,6 +137,25 @@ function add_User(req, res) {
       console.error('Error during registration:', error);
       res.status(500).json({ message: 'Internal server error' });
     }
+  });
+}
+
+function userdetails(req, res) {
+  const userQuery = 'SELECT UserId, Username, FirstName, LastName, ContactNo , Designation, CompanyEmail, DOB, TotalWorkingDays, Supervisor FROM hrms_users';
+
+  db.query(userQuery, (error, userResult) => {
+    if (error) {
+      console.error('Error fetching user details:', error);
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+
+    if (userResult.length === 0) {
+      console.log('users not found!');
+      return res.status(404).json({ message: 'users not found!' });
+    }
+
+    const users = userResult;
+    res.json({ userDetails: users });
   });
 }
 
@@ -199,4 +220,5 @@ function sendTokenDashboardEmail(email, token) {
 module.exports = {
   logExecution,
   add_User,
+  userdetails,
 };
