@@ -27,6 +27,6 @@ router.get('/getUserDetails', sa.userdetails);
 router.put('/usersLeave/:UserId', sa.UpdateLeaveApproval);
 
 //Dashboard
-router.post('/leave/:userId', dashboard.internLeave)
+router.post('/leave', dashboard.internLeave)
 
 module.exports = router;
