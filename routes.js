@@ -22,9 +22,10 @@ router.put('/users/:UserId/block', authentication.Block);
 
 //SuperAdmin
 router.post('/addUser', sa.add_User);
+router.put('/updateLeave/:userId', sa.updateIsAproved);
 router.get('/getUserDetails', sa.userdetails);
 
 //Dashboard
-router.post('/leave', dashboard.internLeave)
+router.post('/leave/:userId', dashboard.internLeave)
 
 module.exports = router;

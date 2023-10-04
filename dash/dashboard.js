@@ -13,12 +13,13 @@ function internLeave(req , res){
     typeOfLeave,
     pendingTaskDetails,
     discussWithSupervisor,
-    comments
+    comments,
+    isAproved,
   } = req.body
 
   try{
     const checkUserId = `SELECT * FROM hrms_users where UserId = ?`;
-    const insertQuery = `Insert INTO intern_leave_info (UserId, FirstName, LastName, CompanyEmail, ReasonForLeave, StartAndEndDate, SupervisorName, TypeOfLeave, PendingTaskDetails, DiscussWithSupervisor, Comments) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    const insertQuery = `Insert INTO intern_leave_info (UserId, FirstName, LastName, CompanyEmail, ReasonForLeave, StartAndEndDate, SupervisorName, TypeOfLeave, PendingTaskDetails, DiscussWithSupervisor, Comments, IsAproved) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
     db.query(checkUserId , [userID], (error , result ) => {
       if(error){
@@ -36,7 +37,8 @@ function internLeave(req , res){
         typeOfLeave,
         pendingTaskDetails,
         discussWithSupervisor,
-        comments], (inserterror , result) =>{
+        comments,
+        'pending'], (inserterror , result) =>{
           if(inserterror){
             console.log(inserterror)
             return res.status(401).json({message : "error while inserting"})
