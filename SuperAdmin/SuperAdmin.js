@@ -163,7 +163,7 @@ function updateIsAproved(req , res){
   const { isAproved } = req.body;
   const { userID } = req.body;
 
-  const checkUserId = `SELECT UserId FROM intern_leave_info `
+  const checkUserId = `SELECT UserId FROM intern_leave_info`
   const isLeaveAproved = `UPDATE intern_leave_info SET IsAproved = ? WHERE UserId = ?`;
 
   try{
