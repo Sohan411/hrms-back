@@ -191,6 +191,38 @@ function updateIsAproved(req , res){
   }
 }
 
+function UpdateLeaveApproval(req, res) {
+  const { UserId } = req.params;
+  const { action } = req.body;
+
+  const approvalId = uuidv4();
+
+  logExecution('UpdateLeaveApproval', approvalId, 'INFO', `Leave ${action} process started for UserId: ${UserId}`);
+
+  if (action !== 'approve' && action !== 'reject') {
+    logExecution('UpdateLeaveApproval', approvalId, 'ERROR', 'Invalid action. Use "approve" or "reject".');
+    return res.status(400).json({ message: 'Invalid action. Use "approve" or "reject".' });
+  }
+  const updateQuery = 'UPDATE intern_leave_info SET IsAproved = ? WHERE UserId = ?';
+  const approvalValue = action === 'approve' ? 'approve' : 'reject';
+
+  db.query(updateQuery, [approvalValue, UserId], (updateError, updateResult) => {
+    if (updateError) {
+      console.error(`Error during leave ${action}ing:`, updateError);
+      logExecution('UpdateLeaveApproval', approvalId, 'ERROR', `Error ${action}ing leave`);
+      return res.status(500).json({ message: `Error ${action}ing leave` });
+    }
+    if (updateResult.affectedRows === 0) {
+      logExecution('UpdateLeaveApproval', approvalId, 'ERROR', 'User not found');
+      return res.status(404).json({ message: 'User not found' });
+    }
+    const successMessage = `Leave ${action}ed successfully`;
+    logExecution('UpdateLeaveApproval', approvalId, 'SUCCESS', successMessage);
+    res.status(200).json({ message: successMessage });
+  });
+}
+
+
  // Helper function to generate a unique 10-digit user ID
 function generateUserId() {
   const userIdLength = 10;
@@ -253,4 +285,5 @@ module.exports = {
   add_User,
   userdetails,
   updateIsAproved,
+  UpdateLeaveApproval
 };
