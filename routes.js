@@ -24,6 +24,7 @@ router.put('/users/:UserId/block', authentication.Block);
 router.post('/addUser', sa.add_User);
 router.put('/updateLeave/:userId', sa.updateIsAproved);
 router.get('/getUserDetails', sa.userdetails);
+router.put('/usersLeave/:UserId', sa.UpdateLeaveApproval);
 
 //Dashboard
 router.post('/leave/:userId', dashboard.internLeave)
