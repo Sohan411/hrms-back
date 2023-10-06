@@ -16,13 +16,10 @@ router.post('/re-verify-mail', authentication.resendToken);
 router.post('/forgot', authentication.forgotPassword);
 router.post('/resend-forgot', authentication.resendResetToken);
 router.post('/reset-password', authentication.resetPassword);
-router.put('/setUserOnline/:UserId', authentication.setUserOnline);
-router.put('/setUserOffline/:UserId', authentication.setUserOffline);
 router.put('/users/:UserId/block', authentication.Block);
 
 //SuperAdmin
 router.post('/addUser', sa.add_User);
-router.put('/updateLeave/:userId', sa.updateIsAproved);
 router.get('/getUserDetails', sa.userdetails);
 router.put('/usersLeave/:UserId', sa.UpdateLeaveApproval);
 

@@ -666,75 +666,6 @@ function resetPassword(req, res) {
   });
 }
 
-
-function setUserOnline(req, res) {
-  const UserId = req.params.UserId;
-  const userCheckQuery = 'SELECT * FROM hrms_users WHERE UserID = ?';
-
-  db.query(userCheckQuery, [UserId], (error, userCheckResult) => {
-    if (error) {
-      console.error('Error during device check:', error);
-      return res.status(500).json({ message: 'Internal server error' });
-    }
-
-    try {
-      if (userCheckResult.length === 0) {
-        console.log('User not found!');
-        return res.status(400).json({ message: 'Device not found!' });
-      }
-
-      const onlineQuery = 'Update hrms_users SET is_online = ? WHERE UserID = ?';
-
-      db.query(onlineQuery, ['1', UserId], (error, users) => {
-        if (error) {
-          console.error('Error fetching users:', error);
-          return res.status(500).json({ message: 'Internal server error' });
-        }
-
-        res.json({ message: 'Status Updated SuccessFully' });
-        console.log(users);
-      });
-    } catch (error) {
-      console.error('Error fetching user:', error);
-      res.status(500).json({ message: 'Internal server error' });
-    }
-  });
-}
-
-function setUserOffline(req, res) {
-  const UserId = req.params.UserId;
-  const userCheckQuery = 'SELECT * FROM hrms_users WHERE UserID = ?';
-
-  db.query(userCheckQuery, [UserId], (error, userCheckResult) => {
-    if (error) {
-      console.error('Error during device check:', error);
-      return res.status(500).json({ message: 'Internal server error' });
-    }
-
-    try {
-      if (userCheckResult.length === 0) {
-        console.log('User not found!');
-        return res.status(400).json({ message: 'Device not found!' });
-      }
-
-      const onlineQuery = 'Update hrms_users SET is_online = ? WHERE UserID = ?';
-
-      db.query(onlineQuery, ['0', UserId], (error, users) => {
-        if (error) {
-          console.error('Error fetching users:', error);
-          return res.status(500).json({ message: 'Internal server error' });
-        }
-
-        res.json({ message: 'Status Updated SuccessFully' });
-        console.log(users);
-      });
-    } catch (error) {
-      console.error('Error fetching user:', error);
-      res.status(500).json({ message: 'Internal server error' });
-    }
-  });
-}
-
 function Block(req, res) {
   const { UserId } = req.params;
   const { action } = req.body;
@@ -814,8 +745,6 @@ module.exports = {
   forgotPassword,
   resendResetToken,
   resetPassword,
-  setUserOnline,
-  setUserOffline,
   Block,
 
 };

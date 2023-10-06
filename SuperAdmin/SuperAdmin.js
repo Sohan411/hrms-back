@@ -159,37 +159,6 @@ function userdetails(req, res) {
   });
 }
 
-function updateIsAproved(req , res){
-  const { isAproved } = req.body;
-  const { userID } = req.body;
-
-  const checkUserId = `SELECT UserId FROM intern_leave_info`
-  const isLeaveAproved = `UPDATE intern_leave_info SET IsAproved = ? WHERE UserId = ?`;
-
-  try{
-    db.query(checkUserId , [userID], (err , result) => {
-      if(err){
-        console.log(err)
-        return res.status(401).json({message : 'error while checking UserID'})
-      }
-      db.query(isLeaveAproved, [isAproved, userID], (err, result) =>
-      {
-        if(err){
-          console.log(err)
-          return res.status(401).json({message : 'error while aproving leave'});
-        }if(result.affectedRows === 0){
-          console.log('user not found')
-          return res.status(401).json({message : 'user not found'});
-        }
-        console.log('Leave Aproved/Denied')
-        res.status(200).json({message : 'Leave Aproved/Denied'});
-      })
-    })
-    }catch(error){
-      console.log(error)
-      res.status(500).json({message : 'Internal Server Error'});
-  }
-}
 
 function UpdateLeaveApproval(req, res) {
   const { UserId } = req.params;
@@ -284,6 +253,5 @@ module.exports = {
   logExecution,
   add_User,
   userdetails,
-  updateIsAproved,
   UpdateLeaveApproval
 };
