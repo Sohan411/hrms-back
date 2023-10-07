@@ -192,6 +192,13 @@ function UpdateLeaveApproval(req, res) {
 }
 
 
+function markAttendence(req, res){
+  const {userId} = req.params;
+  const {attendence} = req.body;
+
+  const attendenceQuery = `UPDATE intern_leave`
+}
+
  // Helper function to generate a unique 10-digit user ID
 function generateUserId() {
   const userIdLength = 10;

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const authentication = require('./Authentication/authentication');
 const sa = require('./SuperAdmin/SuperAdmin');
-const dashboard = require('./Dash/dashboard');
+const dashboard = require('./dash/dashboard');
 
 
 // Registration route

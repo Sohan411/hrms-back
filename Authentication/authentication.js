@@ -746,5 +746,4 @@ module.exports = {
   resendResetToken,
   resetPassword,
   Block,
-
 };
