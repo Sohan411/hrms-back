@@ -49,7 +49,7 @@ function logExecution(functionName, tenantId, status, message) {
   });
 }
 
-function add_User(req, res) {
+function addUser(req, res) {
   const {
     contact,
     firstName,
@@ -191,12 +191,31 @@ function UpdateLeaveApproval(req, res) {
   });
 }
 
+function getAttendenceDetails(req, res) {
+  const userQuery = 'SELECT UserId, Username, FirstName, LastName, CompanyEmail, ReasonForLeave, StartDate, EndDate, SupervisorName, TypeOfLeave, PendingTaskDetails, DiscussWithSupervisor, Comments, IsAproved, EmergencyContact, CreatedAt, UpdatedAt, TotalLeaveDays FROM hrms_users';
+
+  db.query(userQuery, (error, userResult) => {
+    if (error) {
+      console.error('Error fetching user details:', error);
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+
+    if (userResult.length === 0) {
+      console.log('users not found!');
+      return res.status(404).json({ message: 'users not found!' });
+    }
+
+    const attendence = userResult;
+    res.json({ getAttendenceDetails: attendence });
+  });
+}
+
 
 function markAttendence(req, res){
   const {userId} = req.params;
   const {attendence} = req.body;
 
-  const attendenceQuery = `UPDATE intern_leave`
+  const attendenceQuery = `UPDATE `
 }
 
  // Helper function to generate a unique 10-digit user ID
@@ -258,7 +277,8 @@ function sendTokenDashboardEmail(email, token) {
 
 module.exports = {
   logExecution,
-  add_User,
+  addUser,
   userdetails,
-  UpdateLeaveApproval
+  UpdateLeaveApproval,
+  getAttendenceDetails,
 };

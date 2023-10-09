@@ -19,7 +19,7 @@ router.post('/reset-password', authentication.resetPassword);
 router.put('/users/:UserId/block', authentication.Block);
 
 //SuperAdmin
-router.post('/addUser', sa.add_User);
+router.post('/addUser', sa.addUser);
 router.get('/getUserDetails', sa.userdetails);
 router.put('/usersLeave/:UserId', sa.UpdateLeaveApproval);
 

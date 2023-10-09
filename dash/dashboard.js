@@ -58,7 +58,7 @@ function internLeave(req, res) {
       );
     });
   } catch (error) {
-    console.error('Error in device check:', error);
+    //console.error('Error in device check:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 }
