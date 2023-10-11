@@ -231,8 +231,106 @@ function getLeaveInfo(req , res){
 
   const leaveInfoQuery = `SELECT UserId, FirstName, LastName, ReasonForLeave, CompanyEmail, StartDate, EndDate, SupervisorName,PendingTaskDetails, TypeOfLeave, DiscussWithSupervisor, Comments, IsApproved, EmergencyContact, TotalLeaveDays FROM intern_leave ORDER BY LeaveID DESC`;
 
+  const pendingQuery = `SELECT UserId, FirstName, LastName, ReasonForLeave, CompanyEmail, StartDate, EndDate, SupervisorName,PendingTaskDetails, TypeOfLeave, DiscussWithSupervisor, Comments, IsApproved, EmergencyContact, TotalLeaveDays FROM intern_leave WHERE IsApproved = 'pending' ORDER BY LeaveID DESC`;
+
+  const aprovedQuery = `SELECT UserId, FirstName, LastName, ReasonForLeave, CompanyEmail, StartDate, EndDate, SupervisorName,PendingTaskDetails, TypeOfLeave, DiscussWithSupervisor, Comments, IsApproved, EmergencyContact, TotalLeaveDays FROM intern_leave WHERE IsApproved = 'aproved' ORDER BY LeaveID DESC`;
+
+  const rejectedQuery = `SELECT UserId, FirstName, LastName, ReasonForLeave, CompanyEmail, StartDate, EndDate, SupervisorName,PendingTaskDetails, TypeOfLeave, DiscussWithSupervisor, Comments, IsApproved, EmergencyContact, TotalLeaveDays FROM intern_leave WHERE IsApproved = 'rejected' ORDER BY LeaveID DESC`;
   try{
     db.query(leaveInfoQuery, [userId,
+      firstName,
+      lastName,
+      reasonForLeave,
+      companyEmail,
+      startDate,
+      endDate,
+      supervisorName,
+      pendingTaskDetails,
+      typeOfLeave,
+      discussWithSupervisor,
+      comments,
+      isAproved,
+      emergencyContact,
+      totalDays,] , (error ,result) => {
+        if(error){
+          console.log(error);
+          return res.status(401).json({message : 'error in retriving data'});
+        }
+        if(result.length === 0 ){
+          return res.status(404).json({message : 'No leave found'});
+        }
+        
+        const leaveInfo = result;
+        res.json({ getLeaveInfo : leaveInfo })
+      });
+  }catch(error){
+    return res.status(500).json({message : 'Internal Server Error'});
+  }
+
+  try{
+    db.query(pendingQuery, [userId,
+      firstName,
+      lastName,
+      reasonForLeave,
+      companyEmail,
+      startDate,
+      endDate,
+      supervisorName,
+      pendingTaskDetails,
+      typeOfLeave,
+      discussWithSupervisor,
+      comments,
+      isAproved,
+      emergencyContact,
+      totalDays,] , (error ,result) => {
+        if(error){
+          console.log(error);
+          return res.status(401).json({message : 'error in retriving data'});
+        }
+        if(result.length === 0 ){
+          return res.status(404).json({message : 'No leave found'});
+        }
+        
+        const leaveInfo = result;
+        res.json({ getLeaveInfo : leaveInfo })
+      });
+  }catch(error){
+    return res.status(500).json({message : 'Internal Server Error'});
+  }
+
+  try{
+    db.query(aprovedQuery, [userId,
+      firstName,
+      lastName,
+      reasonForLeave,
+      companyEmail,
+      startDate,
+      endDate,
+      supervisorName,
+      pendingTaskDetails,
+      typeOfLeave,
+      discussWithSupervisor,
+      comments,
+      isAproved,
+      emergencyContact,
+      totalDays,] , (error ,result) => {
+        if(error){
+          console.log(error);
+          return res.status(401).json({message : 'error in retriving data'});
+        }
+        if(result.length === 0 ){
+          return res.status(404).json({message : 'No leave found'});
+        }
+        
+        const leaveInfo = result;
+        res.json({ getLeaveInfo : leaveInfo })
+      });
+  }catch(error){
+    return res.status(500).json({message : 'Internal Server Error'});
+  }
+
+  try{
+    db.query(rejectedQuery, [userId,
       firstName,
       lastName,
       reasonForLeave,
