@@ -168,7 +168,6 @@ function updateOutTime (req, res){
       });
 
     });
-
   });
   
 }

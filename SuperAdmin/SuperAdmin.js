@@ -233,10 +233,53 @@ function getLeaveInfo(req , res){
   
 }
 
-function getLeaveInfoByAction(req, res){
+function getPendingLeaveInfo(req, res){
 
-  const action = req.params.IsAproved;
-  const leaveInfoQuery = `SELECT * FROM intern_leave WHERE IsApproved = ? ORDER BY LeaveID DESC`;
+  const leaveInfoQuery = `SELECT * FROM intern_leave WHERE IsApproved = 'pending' ORDER BY LeaveID DESC`;
+
+  try{
+    db.query(leaveInfoQuery, [action] , (error ,result) => {
+        if(error){
+          console.log(error);
+          return res.status(401).json({message : 'error in retriving data'});
+        }
+        if(result.length === 0 ){
+          return res.status(404).json({message : 'No leave found'});
+        }
+        
+        const leaveInfo = result;
+        res.json({ getLeaveInfo : leaveInfo })
+      });
+  }catch(error){
+    return res.status(500).json({message : 'Internal Server Error'});
+  }
+}
+
+function getAprovedLeaveInfo(req, res){
+
+  const leaveInfoQuery = `SELECT * FROM intern_leave WHERE IsApproved = 'aproved' ORDER BY LeaveID DESC`;
+
+  try{
+    db.query(leaveInfoQuery, [action] , (error ,result) => {
+        if(error){
+          console.log(error);
+          return res.status(401).json({message : 'error in retriving data'});
+        }
+        if(result.length === 0 ){
+          return res.status(404).json({message : 'No leave found'});
+        }
+        
+        const leaveInfo = result;
+        res.json({ getLeaveInfo : leaveInfo })
+      });
+  }catch(error){
+    return res.status(500).json({message : 'Internal Server Error'});
+  }
+}
+
+function getRejectedLeaveInfo(req, res){
+
+  const leaveInfoQuery = `SELECT * FROM intern_leave WHERE IsApproved = 'rejected' ORDER BY LeaveID DESC`;
 
   try{
     db.query(leaveInfoQuery, [action] , (error ,result) => {
@@ -320,5 +363,7 @@ module.exports = {
   UpdateLeaveApproval,
   getAttendenceDetails,
   getLeaveInfo,
-  getLeaveInfoByAction,
+  getPendingLeaveInfo,
+  getAprovedLeaveInfo,
+  getRejectedLeaveInfo,
 };
