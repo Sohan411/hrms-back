@@ -210,12 +210,57 @@ function getAttendenceDetails(req, res) {
   });
 }
 
+function getLeaveInfo(req , res){
+  const{
+    userId,
+    firstName,
+    lastName,
+    reasonForLeave,
+    companyEmail,
+    startDate,
+    endDate,
+    supervisorName,
+    pendingTaskDetails,
+    typeOfLeave,
+    discussWithSupervisor,
+    comments,
+    isAproved,
+    emergencyContact,
+    totalDays,
+  } = req.body;
 
-function markAttendence(req, res){
-  const {userId} = req.params;
-  const {attendence} = req.body;
+  const leaveInfoQuery = `SELECT UserId, FirstName, LastName, ReasonForLeave, CompanyEmail, StartDate, EndDate, SupervisorName,PendingTaskDetails, TypeOfLeave, DiscussWithSupervisor, Comments, IsApproved, EmergencyContact, TotalLeaveDays FROM intern_leave ORDER BY LeaveID DESC`;
 
-  const attendenceQuery = `UPDATE `
+  try{
+    db.query(leaveInfoQuery, [userId,
+      firstName,
+      lastName,
+      reasonForLeave,
+      companyEmail,
+      startDate,
+      endDate,
+      supervisorName,
+      pendingTaskDetails,
+      typeOfLeave,
+      discussWithSupervisor,
+      comments,
+      isAproved,
+      emergencyContact,
+      totalDays,] , (error ,result) => {
+        if(error){
+          console.log(error);
+          return res.status(401).json({message : 'error in retriving data'});
+        }
+        if(result.length === 0 ){
+          return res.status(404).json({message : 'No leave found'});
+        }
+        
+        const leaveInfo = result;
+        res.json({ getLeaveInfo : leaveInfo })
+      });
+  }catch(error){
+    return res.status(500).json({message : 'Internal Server Error'});
+  }
 }
 
  // Helper function to generate a unique 10-digit user ID
@@ -281,4 +326,5 @@ module.exports = {
   userdetails,
   UpdateLeaveApproval,
   getAttendenceDetails,
+  getLeaveInfo,
 };

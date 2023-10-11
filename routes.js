@@ -22,8 +22,11 @@ router.put('/users/:UserId/block', authentication.Block);
 router.post('/addUser', sa.addUser);
 router.get('/getUserDetails', sa.userdetails);
 router.put('/usersLeave/:UserId', sa.UpdateLeaveApproval);
+router.get('/leaveInfo', sa.getLeaveInfo);
 
 //Dashboard
-router.post('/leave', dashboard.internLeave)
+router.post('/leave', dashboard.internLeave);
+router.post('/attendence/:userId', dashboard.attendance);
+router.put('/updateOutTime/:userId', dashboard.updateOutTime);
 
 module.exports = router;
