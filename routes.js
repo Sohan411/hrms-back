@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const authentication = require('./Authentication/authentication');
 const sa = require('./SuperAdmin/SuperAdmin');
-const dashboard = require('./dash/dashboard');
+const dashboard = require('./Dash/dashboard');
 
 
 // Registration route
@@ -23,6 +23,7 @@ router.post('/addUser', sa.addUser);
 router.get('/getUserDetails', sa.userdetails);
 router.put('/usersLeave/:UserId', sa.UpdateLeaveApproval);
 router.get('/leaveInfo', sa.getLeaveInfo);
+router.get('/leaveInfoByAction/:IsApproved',sa.getLeaveInfoByAction);
 
 //Dashboard
 router.post('/leave', dashboard.internLeave);
