@@ -31,5 +31,6 @@ router.get('/rejectedLeaveInfo',sa.getRejectedLeaveInfo);
 router.post('/leave', dashboard.internLeave);
 router.post('/attendence/:userId', dashboard.attendance);
 router.put('/updateOutTime/:userId', dashboard.updateOutTime);
+router.post('/internInfo/:userId', dashboard.internInfo);
 
 module.exports = router;

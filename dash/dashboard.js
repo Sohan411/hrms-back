@@ -169,7 +169,71 @@ function updateOutTime (req, res){
 
     });
   });
-  
+}
+
+function internInfo(req, res) {
+  const userId = req.params.userId
+  const {
+    contact,
+    firstName,
+    lastName,
+    collegeName,
+    collegeId,
+    employeeId,
+    addressLane1,
+    addressLane2,
+    postcode,
+    state,
+    emailId,
+    education,
+    country,
+  } = req.body;
+
+  const address = addressLane1 + addressLane2 ;
+
+  // Check if the userid is already registered
+  const userIdCheckQuery = 'SELECT * FROM hrms_users WHERE UserId = ?';
+  db.query(userIdCheckQuery, [userId], (error, userIdCheckResult) => {
+    if (error) {
+      console.error('Error during username check:', error);
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+        try {
+
+          // Insert the user into the database
+          const insertQuery =
+            'INSERT INTO intern_info(UserId, FirstName, LastName, ContactNo, CollegeName, CollegeId, Education, EmployeeId, EmailId, AddressLane1, AddressLane2, PostalCode, State, Country) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+          db.query(
+            insertQuery,
+            [
+              userId,
+              firstName,
+              lastName,
+              contact,
+              collegeName,
+              collegeId,
+              education,
+              employeeId,
+              emailId,
+              addressLane1,
+              addressLane2,
+              postcode,
+              state,
+              country,
+            ],
+            (error, insertResult) => {
+              if(error){
+                console.error('Error during user insertion:', error);
+                return res.status(401).json({ message: 'Error inserting data' });
+              }
+              return res.status(200).json({message : 'Information Updated Successfully'})
+            }
+          );
+        }catch(error) {
+          console.error('Error during registration:', error);
+          res.status(500).json({ message: 'Internal server error' });
+        }
+  });
 }
 
 
@@ -178,4 +242,5 @@ module.exports = {
   internLeave,
   attendance,
   updateOutTime,
+  internInfo,
 }
