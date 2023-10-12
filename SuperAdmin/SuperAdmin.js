@@ -238,7 +238,7 @@ function getPendingLeaveInfo(req, res){
   const leaveInfoQuery = `SELECT * FROM intern_leave WHERE IsApproved = 'pending' ORDER BY LeaveID DESC`;
 
   try{
-    db.query(leaveInfoQuery, [action] , (error ,result) => {
+    db.query(leaveInfoQuery,(error ,result) => {
         if(error){
           console.log(error);
           return res.status(401).json({message : 'error in retriving data'});
@@ -260,7 +260,7 @@ function getAprovedLeaveInfo(req, res){
   const leaveInfoQuery = `SELECT * FROM intern_leave WHERE IsApproved = 'aproved' ORDER BY LeaveID DESC`;
 
   try{
-    db.query(leaveInfoQuery, [action] , (error ,result) => {
+    db.query(leaveInfoQuery,(error ,result) => {
         if(error){
           console.log(error);
           return res.status(401).json({message : 'error in retriving data'});
@@ -282,7 +282,7 @@ function getRejectedLeaveInfo(req, res){
   const leaveInfoQuery = `SELECT * FROM intern_leave WHERE IsApproved = 'rejected' ORDER BY LeaveID DESC`;
 
   try{
-    db.query(leaveInfoQuery, [action] , (error ,result) => {
+    db.query(leaveInfoQuery, (error ,result) => {
         if(error){
           console.log(error);
           return res.status(401).json({message : 'error in retriving data'});
