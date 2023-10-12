@@ -269,10 +269,32 @@ function getRejectedLeaveInfo(req, res){
         }
         
         const leaveInfo = result;
-        res.json({ getLeaveInfo : leaveInfo })
+        res.json({ getLeaveInfo : leaveInfo });
       });
   }catch(error){
     return res.status(500).json({message : 'Internal Server Error'});
+  }
+}
+
+function getLeaveInfo(req, res){
+  const leaveID = req.params.leaveID;
+
+  const fetchLeaveInfoQuery = `Select * FROM intern_leave WHERE LeaveID = ?`;
+
+  try{
+    db.query(fetchLeaveInfoQuery, [leaveID], (getError, getResult)=>{
+      if(getError){
+        return res.status(401).json({message : 'Error in fetching data'});
+      }
+      if(getResult.length === 0){
+        return res.status(404).json({message : 'No Leaves Found'});
+      }
+
+      const fetchedResult = getResult;
+      res.json({ getLeaveInfo : fetchedResult });
+    });
+  }catch(error){
+    res.status(500).json({message : 'Internal Server error'});
   }
 }
 
@@ -339,7 +361,7 @@ module.exports = {
   userdetails,
   UpdateLeaveApproval,
   getAttendenceDetails,
-  // getLeaveInfo,
+  getLeaveInfo,
   getPendingLeaveInfo,
   getAprovedLeaveInfo,
   getRejectedLeaveInfo,
