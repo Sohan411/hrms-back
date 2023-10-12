@@ -257,7 +257,7 @@ function getPendingLeaveInfo(req, res){
 
 function getAprovedLeaveInfo(req, res){
 
-  const leaveInfoQuery = `SELECT * FROM intern_leave WHERE IsApproved = 'aproved' ORDER BY LeaveID DESC`;
+  const leaveInfoQuery = `SELECT * FROM intern_leave WHERE IsApproved = 'approved' ORDER BY LeaveID DESC`;
 
   try{
     db.query(leaveInfoQuery,(error ,result) => {
