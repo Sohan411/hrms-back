@@ -23,9 +23,9 @@ router.post('/addUser', sa.addUser);
 router.get('/getUserDetails', sa.userdetails);
 router.put('/usersLeave/:UserId', sa.UpdateLeaveApproval);
 router.get('/leaveInfo', sa.getLeaveInfo);
-router.get('/pendingLeaveInfo',sa.getPendingLeaveInfo);
-router.get('/approvedLeaveInfo',sa.getAprovedLeaveInfo);
-router.get('/rejectedLeaveInfo',sa.getRejectedLeaveInfo);
+router.get('/pendingLeaveInfo/:leaveId',sa.getPendingLeaveInfo);
+router.get('/approvedLeaveInfo/:leaveId',sa.getAprovedLeaveInfo);
+router.get('/rejectedLeaveInfo/:leaveId',sa.getRejectedLeaveInfo);
 
 //Dashboard
 router.post('/leave', dashboard.internLeave);

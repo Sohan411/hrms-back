@@ -210,35 +210,13 @@ function getAttendenceDetails(req, res) {
   });
 }
 
-function getLeaveInfo(req , res){
-
-  const leaveInfoQuery = `SELECT * FROM intern_leave ORDER BY LeaveID DESC`;
-
-  try{
-    db.query(leaveInfoQuery, (error ,result) => {
-        if(error){
-          console.log(error);
-          return res.status(401).json({message : 'error in retriving data'});
-        }
-        if(result.length === 0 ){
-          return res.status(404).json({message : 'No leave found'});
-        }
-        
-        const leaveInfo = result;
-        res.json({ getLeaveInfo : leaveInfo })
-      });
-  }catch(error){
-    return res.status(500).json({message : 'Internal Server Error'});
-  }
-  
-}
-
 function getPendingLeaveInfo(req, res){
 
-  const leaveInfoQuery = `SELECT * FROM intern_leave WHERE IsApproved = 'pending' ORDER BY LeaveID DESC`;
+  const leaveId = req.params.leaveId
+  const leaveInfoQuery = `SELECT * FROM intern_leave WHERE LeaveID = ? AND IsApproved = 'pending' ORDER BY LeaveID DESC`;
 
   try{
-    db.query(leaveInfoQuery,(error ,result) => {
+    db.query(leaveInfoQuery,[leaveId], (error ,result) => {
         if(error){
           console.log(error);
           return res.status(401).json({message : 'error in retriving data'});
@@ -256,11 +234,12 @@ function getPendingLeaveInfo(req, res){
 }
 
 function getAprovedLeaveInfo(req, res){
-
-  const leaveInfoQuery = `SELECT * FROM intern_leave WHERE IsApproved = 'approved' ORDER BY LeaveID DESC`;
+  
+  const leaveId = req.params.leaveId
+  const leaveInfoQuery = `SELECT * FROM intern_leave WHERE LeaveID = ? AND IsApproved = 'approved' ORDER BY LeaveID DESC`;
 
   try{
-    db.query(leaveInfoQuery,(error ,result) => {
+    db.query(leaveInfoQuery,[leaveId], (error ,result) => {
         if(error){
           console.log(error);
           return res.status(401).json({message : 'error in retriving data'});
@@ -279,10 +258,11 @@ function getAprovedLeaveInfo(req, res){
 
 function getRejectedLeaveInfo(req, res){
 
-  const leaveInfoQuery = `SELECT * FROM intern_leave WHERE IsApproved = 'rejected' ORDER BY LeaveID DESC`;
+  const leaveId = req.params.leaveId
+  const leaveInfoQuery = `SELECT * FROM intern_leave WHERE LeaveID = ? AND IsApproved = 'rejected' ORDER BY LeaveID DESC`;
 
   try{
-    db.query(leaveInfoQuery, (error ,result) => {
+    db.query(leaveInfoQuery, [leaveId], (error ,result) => {
         if(error){
           console.log(error);
           return res.status(401).json({message : 'error in retriving data'});
