@@ -339,7 +339,7 @@ module.exports = {
   userdetails,
   UpdateLeaveApproval,
   getAttendenceDetails,
-  getLeaveInfo,
+  // getLeaveInfo,
   getPendingLeaveInfo,
   getAprovedLeaveInfo,
   getRejectedLeaveInfo,
