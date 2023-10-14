@@ -192,22 +192,26 @@ function UpdateLeaveApproval(req, res) {
 }
 
 function getAttendenceDetails(req, res) {
-  const userQuery = 'SELECT UserId, Username, FirstName, LastName, CompanyEmail, ReasonForLeave, StartDate, EndDate, SupervisorName, TypeOfLeave, PendingTaskDetails, DiscussWithSupervisor, Comments, IsAproved, EmergencyContact, CreatedAt, UpdatedAt, TotalLeaveDays FROM hrms_users';
+  const userQuery = 'SELECT * FROM hrms_users intern_attendence';
 
-  db.query(userQuery, (error, userResult) => {
-    if (error) {
-      console.error('Error fetching user details:', error);
-      return res.status(500).json({ message: 'Internal server error' });
-    }
+  try{
+    db.query(userQuery, (error, userResult) => {
+      if (error) {
+        console.error('Error fetching user details:', error);
+        return res.status(500).json({ message: 'Internal server error' });
+      }
 
-    if (userResult.length === 0) {
-      console.log('users not found!');
-      return res.status(404).json({ message: 'users not found!' });
-    }
+      if (userResult.length === 0) {
+        console.log('users not found!');
+        return res.status(404).json({ message: 'users not found!' });
+      }
 
-    const attendence = userResult;
-    res.json({ getAttendenceDetails: attendence });
-  });
+      const attendence = userResult;
+      res.json({ getAttendenceDetails: attendence});
+    });
+  }catch(error){
+    res.status(500).json({message : 'Internal Server Error'});
+  }
 }
 
 function getPendingLeaveInfo(req, res){
@@ -298,6 +302,45 @@ function getLeaveInfo(req, res){
   }
 }
 
+function getLeaveInfoByDate(req, res){
+  const { currentDate = new Date() } = req.body;
+
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth() + 1;
+  const day = currentDate.getDate();
+
+  const formattedDate = `${year}-${month}-${day}`;
+
+  const employeeOnLeaveQuery = `SELECT * FROM intern_leave WHERE StartDate = ?`;
+
+  db.query(employeeOnLeaveQuery, [formattedDate], (errorfetching, result) => {
+    if(errorfetching){
+      console.log(errorfetching);
+      return res.status(401).json({ message : 'error fetching data' });
+    }
+    if(result.length === 0){
+      return res.status(404).json({message : 'No Leaves Found'});
+    }
+    res.json({getLeaveInfoByDate : result});
+  });
+}
+
+function getLeaveByUserId(req , res){
+  const {userId} = req.params.userId;
+
+  const fetchLeaveQuery = `SELECT * FROM intern_leave WHERE UserId = ?`;
+
+  db.query(fetchLeaveQuery, [userId], (fetchingError, fetchingResult)=>{
+    if(fetchingError){
+      return res.status(401).json({message : 'error fetching data'});
+    }
+    if(fetchingResult.length === 0){
+      return res.status(404).json({message : 'No Leaves Found'});
+    }
+    res.json({getLeaveByUserId : fetchingResult});
+  });
+}
+
  // Helper function to generate a unique 10-digit user ID
 function generateUserId() {
   const userIdLength = 10;
@@ -365,4 +408,6 @@ module.exports = {
   getPendingLeaveInfo,
   getAprovedLeaveInfo,
   getRejectedLeaveInfo,
+  getLeaveInfoByDate,
+  getLeaveByUserId,
 };

@@ -57,3 +57,21 @@ module.exports = {
 
 
 
+const fetchInTime = `Select InTime from intern_attendence WHERE UserId = ?`;
+const updateTotalHours = `UPDATE intern_attendence SET TotalHours = ? WHERE UserId = ?`;
+
+db.query(fetchInTime, [inTime, userId],( fetchInTimeerror, InTimeresult) => {
+  if(fetchInTimeerror){
+    console.log(fetchInTimeerror)
+    return res.status(401).json({message : 'error while fetching In Time'})
+  }
+
+  db.query(updateTotalHours, [timeDifferenceHours, userId], (updateTotalHourserror, result) => {
+    if(updateTotalHourserror){
+      console.log(updateTotalHourserror);
+      return res.status(401).json({message : 'Error while updating total hours'});
+    }
+    return res.status(200).json({message : 'OutTime and Total Hours Updated Successfully'});
+  });
+
+});

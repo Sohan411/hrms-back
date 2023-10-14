@@ -68,7 +68,7 @@ function attendance(req, res) {
   const { currentDate = new Date() } = req.body;
 
   const fetchUserId = `SELECT * FROM hrms_users WHERE UserId = ?`;
-  const insertAttendanceQuery = `INSERT INTO intern_attendence(UserId, Date, inTime) VALUES (?, ?, ?)`;
+  const insertAttendanceQuery = `INSERT INTO intern_attendence(UserId, Date, inTime, Attendence) VALUES (?, ?, ?, ?)`;
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth() + 1;
@@ -85,21 +85,19 @@ function attendance(req, res) {
   db.query(fetchUserId, [userId], (userIdError, userResult) => {
     if (userIdError) {
       console.error(userIdError);
-      return res.status(500).json({ message: 'Internal server error while fetching user' });
+      return res.status(401).json({ message: 'Internal server error while fetching user' });
     }
 
     if (userResult.length === 0) {
       // console.log(userResult);
       return res.status(404).json({ message: 'User not found' });
     }
-
     // If the user exists, insert attendance record
-    db.query(insertAttendanceQuery, [userId, formattedDate, formattedInTime], (insertError, insertResult) => {
+    db.query(insertAttendanceQuery, [userId, formattedDate, formattedInTime, '1'], (insertError, insertResult) => {
       if (insertError) {
         console.error(insertError);
         return res.status(500).json({ message: 'Internal server error while inserting attendance' });
       }
-
       return res.status(200).json({ message: 'Attendance marked'});
     });
   });
@@ -107,18 +105,11 @@ function attendance(req, res) {
 
 function updateOutTime (req, res){
   const userId = req.params.userId;
-  const inTime = req.params.inTime;
   const {currentDate = new Date()} = req.body;
-
-
-  const timeDifferenceMs = currentDate - inTime;
-
-  const timeDifferenceHours = timeDifferenceMs / (1000 * 60 * 60);
 
   const fetchUserId = `SELECT * FROM hrms_users WHERE UserId = ?`;
   const updateOutTime = `UPDATE intern_attendence SET OutTime = ? WHERE UserId = ?`;
-  const fetchInTime = `Select InTime from intern_attendence WHERE UserId = ?`;
-  const updateTotalHours = `UPDATE intern_attendence SET TotalHours = ? WHERE UserId = ?`;
+
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth() + 1;
@@ -132,41 +123,20 @@ function updateOutTime (req, res){
   const formattedDate = `${year}-${month}-${day}`;
   const formattedOutTime = `${formattedDate} ${hours}:${minutes}:${seconds}`;
 
-  console.log(timeDifferenceHours);
-
   db.query(fetchUserId, [userId], (error, fetchResult) => {
     if(error){
       return res.status(401).json({message : 'error while checking userid'});
     }
-
     if (fetchResult.length === 0) {
       console.log(fetchResult);
       return res.status(404).json({ message: 'User not found' });
     }
-
     db.query(updateOutTime , [formattedOutTime, userId] ,(err, updateResult) => {
       if(err){
         console.log(err);
         return res.status(401).json({message : 'error while updating'})
       }
-
-      //return res.status(200).json({message : 'Out Time Marked Successfully'});
-      db.query(fetchInTime, [inTime, userId],( fetchInTimeerror, InTimeresult) => {
-        if(fetchInTimeerror){
-          console.log(fetchInTimeerror)
-          return res.status(401).json({message : 'error while fetching In Time'})
-        }
-
-        db.query(updateTotalHours, [timeDifferenceHours, userId], (updateTotalHourserror, result) => {
-          if(updateTotalHourserror){
-            console.log(updateTotalHourserror);
-            return res.status(401).json({message : 'Error while updating total hours'});
-          }
-          return res.status(200).json({message : 'OutTime and Total Hours Updated Successfully'});
-        });
-
-      });
-
+      return res.status(200).json({message : 'Out Time Marked Successfully'});
     });
   });
 }
@@ -189,8 +159,6 @@ function internInfo(req, res) {
     country,
   } = req.body;
 
-  const address = addressLane1 + addressLane2 ;
-
   // Check if the userid is already registered
   const userIdCheckQuery = 'SELECT * FROM hrms_users WHERE UserId = ?';
   db.query(userIdCheckQuery, [userId], (error, userIdCheckResult) => {
@@ -198,41 +166,40 @@ function internInfo(req, res) {
       console.error('Error during username check:', error);
       return res.status(500).json({ message: 'Internal server error' });
     }
-        try {
-
-          // Insert the user into the database
-          const insertQuery =
-            'INSERT INTO intern_info(UserId, FirstName, LastName, ContactNo, CollegeName, CollegeId, Education, EmployeeId, EmailId, AddressLane1, AddressLane2, PostalCode, State, Country) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-          db.query(
-            insertQuery,
-            [
-              userId,
-              firstName,
-              lastName,
-              contact,
-              collegeName,
-              collegeId,
-              education,
-              employeeId,
-              emailId,
-              addressLane1,
-              addressLane2,
-              postcode,
-              state,
-              country,
-            ],
-            (error, insertResult) => {
-              if(error){
-                console.error('Error during user insertion:', error);
-                return res.status(401).json({ message: 'Error inserting data' });
-              }
-              return res.status(200).json({message : 'Information Updated Successfully'})
-            }
-          );
-        }catch(error) {
-          console.error('Error during registration:', error);
-          res.status(500).json({ message: 'Internal server error' });
+    try {
+      // Insert the user into the database
+      const insertQuery =
+        'INSERT INTO intern_info(UserId, FirstName, LastName, ContactNo, CollegeName, CollegeId, Education, EmployeeId, EmailIdAddressLane1, AddressLane2, PostalCode, State, Country) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+      db.query(
+        insertQuery,
+        [
+          userId,
+          firstName,
+          lastName,
+          contact,
+          collegeName,
+          collegeId,
+          education,
+          employeeId,
+          emailId,
+          addressLane1,
+          addressLane2,
+          postcode,
+          state,
+          country,
+        ],
+        (error, insertResult) => {
+          if(error){
+            console.error('Error during user insertion:', error);
+            return res.status(401).json({ message: 'Error inserting data' });
+          }
+          return res.status(200).json({message : 'Information Updated Successfully'})
         }
+      );
+    }catch(error) {
+      console.error('Error during registration:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
   });
 }
 

@@ -26,6 +26,8 @@ router.get('/pendingLeaveInfo',sa.getPendingLeaveInfo);
 router.get('/approvedLeaveInfo',sa.getAprovedLeaveInfo);
 router.get('/rejectedLeaveInfo',sa.getRejectedLeaveInfo);
 router.get('/getLeaveInfo/:leaveID', sa.getLeaveInfo);
+router.get('/getLeaveByDate', sa.getLeaveInfoByDate);
+router.get('/getLeaveByUserID/:userId', sa.getLeaveByUserId);
 
 //Dashboard
 router.post('/leave', dashboard.internLeave);
