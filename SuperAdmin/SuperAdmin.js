@@ -343,14 +343,46 @@ function getLeaveByUserId(req , res){
 
 function acceptAttendence(req, res){
   const { userId } = req.params.userId;
+  const userIdCheckQuery = `Select * FROM hrms_users WHERE UserId = ?`
   const accpetQuery = `INSERT INTO intern_attendence(Attendence) VALUES(?)`;
 
-  db.query(accpetQuery, ['1', userId], (error, result) => {
+  db.query(userIdCheckQuery, [userId],(error, checkResult) =>{
     if(error){
-      return res.status(401).json({ message : 'Error Marking Attendence'});
+      return res.status(401).json({ message : 'Error Checking UserId' });
     }
-    return res.status(200).json({message : 'Attendence Marked Successfully'});
-  });
+    if(checkResult.length === 0){
+      return res.status(404).json({ message : 'User Not Found' });
+    }
+    db.query(accpetQuery, ['1', userId], (error, result) => {
+      if(error){
+        return res.status(401).json({ message : 'Error Marking Attendence'});
+      }
+      return res.status(200).json({ message : 'Attendence Marked Successfully' });
+    });
+  }); 
+}
+
+function taskUpdate(req, res){
+  const {employeeName,
+  projectTitle,
+  deadLine,
+  remarks,
+  status,
+  dateRange = new Date().toISOString} = req.body;
+
+  const insertQuery = `INSERT INTO intern_tasksheet(EmployeeName, ProjectTitle, Deadline, Remarks, Status,DateRange) VALUES(?, ?, ?, ?, ?, ?)`;
+
+  db.query(insertQuery, [employeeName,
+    projectTitle,
+    deadLine,
+    remarks,
+    status,
+    dateRange], (error, result)=>{
+      if(error){
+        return res.status(401).json({message : 'Error Inserting data'});
+      }
+      return res.status(200).json({messgae : 'Task Updated Successfully'})
+    });
 }
 
 // Helper function to generate a unique 10-digit user ID
