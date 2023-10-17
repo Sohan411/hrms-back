@@ -259,7 +259,7 @@ function getAprovedLeaveInfo(req, res){
 }
 
 function getRejectedLeaveInfo(req, res){
-
+  
   const leaveInfoQuery = `SELECT * FROM intern_leave WHERE IsApproved = 'rejected' ORDER BY LeaveID DESC`;
 
   try{
@@ -337,11 +337,23 @@ function getLeaveByUserId(req , res){
     if(fetchingResult.length === 0){
       return res.status(404).json({message : 'No Leaves Found'});
     }
-    res.json({getLeaveByUserId : fetchingResult});
+    res.json({ getLeaveByUserId : fetchingResult });
   });
 }
 
- // Helper function to generate a unique 10-digit user ID
+function acceptAttendence(req, res){
+  const { userId } = req.params.userId;
+  const accpetQuery = `INSERT INTO intern_attendence(Attendence) VALUES(?)`;
+
+  db.query(accpetQuery, ['1', userId], (error, result) => {
+    if(error){
+      return res.status(401).json({ message : 'Error Marking Attendence'});
+    }
+    return res.status(200).json({message : 'Attendence Marked Successfully'});
+  });
+}
+
+// Helper function to generate a unique 10-digit user ID
 function generateUserId() {
   const userIdLength = 10;
   let userId = '';
@@ -352,7 +364,6 @@ function generateUserId() {
     const randomIndex = Math.floor(Math.random() * characters.length);
     userId += characters.charAt(randomIndex);
   }
-
   return userId;
 }
 
@@ -410,4 +421,5 @@ module.exports = {
   getRejectedLeaveInfo,
   getLeaveInfoByDate,
   getLeaveByUserId,
+  acceptAttendence,
 };

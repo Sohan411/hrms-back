@@ -68,7 +68,7 @@ function attendance(req, res) {
   const { currentDate = new Date() } = req.body;
 
   const fetchUserId = `SELECT * FROM hrms_users WHERE UserId = ?`;
-  const insertAttendanceQuery = `INSERT INTO intern_attendence(UserId, Date, inTime, Attendence) VALUES (?, ?, ?, ?)`;
+  const insertAttendanceQuery = `INSERT INTO intern_attendence(UserId, Date, inTime) VALUES (?, ?, ?)`;
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth() + 1;
@@ -93,7 +93,7 @@ function attendance(req, res) {
       return res.status(404).json({ message: 'User not found' });
     }
     // If the user exists, insert attendance record
-    db.query(insertAttendanceQuery, [userId, formattedDate, formattedInTime, '1'], (insertError, insertResult) => {
+    db.query(insertAttendanceQuery, [userId, formattedDate, formattedInTime], (insertError, insertResult) => {
       if (insertError) {
         console.error(insertError);
         return res.status(500).json({ message: 'Internal server error while inserting attendance' });
