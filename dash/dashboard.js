@@ -93,7 +93,7 @@ function attendance(req, res) {
       return res.status(404).json({ message: 'User not found' });
     }
     // If the user exists, insert attendance record
-    db.query(insertAttendanceQuery, [userId, formattedDate, formattedInTime], (insertError, insertResult) => {
+    db.query(insertAttendanceQuery, [userId, formattedDate, formattedInTime ], (insertError, insertResult) => {
       if (insertError) {
         console.error(insertError);
         return res.status(500).json({ message: 'Internal server error while inserting attendance' });
@@ -199,6 +199,33 @@ function internInfo(req, res) {
     }catch(error) {
       console.error('Error during registration:', error);
       res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+}
+
+function getTaskSheetByUserId(req, res) {
+  const userId = req.params.userId;
+  const checkUserIdQuery = `SELECT * FROM hrms_users`;
+  const tashSheetQuery = 'SELECT * FROM intern_tasksheet';
+
+  db.query( checkUserIdQuery, [userId], (checkError, checkResult) => {
+    if(checkError){
+      return res.status(401).json({ message : 'error checking userID' });
+    }
+    if(checkResult.length === 0){
+      return res.status(404).json({message : 'No User Found'});
+    }
+    try{
+      db.query(tashSheetQuery, (error, takSheets) => {
+        if (error) {
+          console.error('Error fetching TaskSheet details:', error);
+          return res.status(500).json({ message: 'Internal server error' });
+        }
+
+        res.json({ getTaskSheet: takSheets});
+      });
+    }catch(error){
+      res.status(500).json({message : 'Internal Server Error'});
     }
   });
 }

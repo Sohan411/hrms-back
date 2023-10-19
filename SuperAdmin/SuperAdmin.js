@@ -363,7 +363,7 @@ function acceptAttendence(req, res){
 }
 
 function taskUpdate(req, res){
-  const userId = req.params
+  const userId = req.params;
   const {employeeName,
   employeeId,
   projectTitle,
