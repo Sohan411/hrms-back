@@ -363,25 +363,42 @@ function acceptAttendence(req, res){
 }
 
 function taskUpdate(req, res){
-  const {employeeName,
+  const {userId,
+  employeeName,
+  employeeId,
   projectTitle,
   deadLine,
   remarks,
   status,
-  dateRange = new Date().toISOString} = req.body;
+  startDate,
+  endDate
+} = req.body;
 
-  const insertQuery = `INSERT INTO intern_tasksheet(EmployeeName, ProjectTitle, Deadline, Remarks, Status,DateRange) VALUES(?, ?, ?, ?, ?, ?)`;
+  const fetchUserIdQuery = `SELECT * FROM hrms_users WHERE UserId = ?`;
+  const insertQuery = `INSERT INTO intern_tasksheet(UserId, EmployeeName, EmployeeId, ProjectTitle, Deadline, Remarks, Status,DateRange) VALUES(?, ?, ?, ?, ?, ?, ?, ?)`;
 
-  db.query(insertQuery, [employeeName,
-    projectTitle,
-    deadLine,
-    remarks,
-    status,
-    dateRange], (error, result)=>{
-      if(error){
-        return res.status(401).json({message : 'Error Inserting data'});
-      }
-      return res.status(200).json({messgae : 'Task Updated Successfully'})
+
+  db.query(fetchUserIdQuery,[userId], (fetchError, fetchResult) => {
+    if(fetchError){
+      return res.status(401).json({message : 'Error Fetching UserID'});
+    }
+    if(fetchResult.lentgth === 0){
+      return res.status(404).json({message : 'User Not Found'});
+    } 
+    db.query(insertQuery, [userId,
+      employeeName,
+      employeeId,
+      projectTitle,
+      deadLine,
+      remarks,
+      status,
+      startDate,
+      endDate], (error, result)=>{
+        if(error){
+          return res.status(401).json({message : 'Error Inserting data'});
+        }
+        return res.status(200).json({messgae : 'Task Updated Successfully'})
+      });
     });
 }
 
@@ -454,4 +471,6 @@ module.exports = {
   getLeaveInfoByDate,
   getLeaveByUserId,
   acceptAttendence,
+  taskUpdate,
+
 };
