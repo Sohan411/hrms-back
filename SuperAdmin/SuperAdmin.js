@@ -404,6 +404,23 @@ function taskUpdate(req, res){
     });
 }
 
+function getTaskSheet(req, res) {
+  const tashSheetQuery = 'SELECT * FROM intern_tasksheet';
+
+  try{
+    db.query(tashSheetQuery, (error, takSheets) => {
+      if (error) {
+        console.error('Error fetching TaskSheet details:', error);
+        return res.status(500).json({ message: 'Internal server error' });
+      }
+
+      res.json({ getTaskSheet: takSheets});
+    });
+  }catch(error){
+    res.status(500).json({message : 'Internal Server Error'});
+  }
+}
+
 // Helper function to generate a unique 10-digit user ID
 function generateUserId() {
   const userIdLength = 10;
@@ -474,5 +491,6 @@ module.exports = {
   getLeaveByUserId,
   acceptAttendence,
   taskUpdate,
+  getTaskSheet,
 
 };
