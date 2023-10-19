@@ -363,19 +363,20 @@ function acceptAttendence(req, res){
 }
 
 function taskUpdate(req, res){
-  const {userId,
-  employeeName,
+  const userId = req.params
+  const {employeeName,
   employeeId,
   projectTitle,
   deadLine,
   remarks,
   status,
   startDate,
-  endDate
+  endDate,
+  priority
 } = req.body;
 
   const fetchUserIdQuery = `SELECT * FROM hrms_users WHERE UserId = ?`;
-  const insertQuery = `INSERT INTO intern_tasksheet(UserId, EmployeeName, EmployeeId, ProjectTitle, Deadline, Remarks, Status,DateRange) VALUES(?, ?, ?, ?, ?, ?, ?, ?)`;
+  const insertQuery = `INSERT INTO intern_tasksheet(UserId, EmployeeName, EmployeeId, ProjectTitle, Deadline, Remarks, Status,DateRange,Priority) VALUES(?, ?, ?, ?, ?, ?, ?, ?)`;
 
 
   db.query(fetchUserIdQuery,[userId], (fetchError, fetchResult) => {
@@ -393,7 +394,8 @@ function taskUpdate(req, res){
       remarks,
       status,
       startDate,
-      endDate], (error, result)=>{
+      endDate,
+      priority], (error, result)=>{
         if(error){
           return res.status(401).json({message : 'Error Inserting data'});
         }
