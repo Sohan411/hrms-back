@@ -421,6 +421,42 @@ function getTaskSheet(req, res) {
   }
 }
 
+function getInternDetails(req, res){
+  const internDetailsQuery = `SELECT * FROM hrms_users WHERE Designation = 'Intern'`;
+
+  try{
+    db.query(internDetailsQuery, (fetcherror, internDetailsResult) => {
+      if(fetcherror){
+        return res.status(401).json({message : 'Error While Fetching Intern Details'});
+      }
+      if(internDetailsResult.length === 0){
+        return res.status(404).json({message : 'No intern Details Found'});
+      }
+      res.json({getInternDetails : internDetailsResult});
+    });
+  }catch(error){
+    res.status(500).json({message : 'Internal Server Error'});
+  }
+}
+
+function getSupervisorDetails(req, res){
+  const internDetailsQuery = `SELECT * FROM hrms_users WHERE Designation = 'Manager'`;
+
+  try{
+    db.query(internDetailsQuery, (fetcherror, internDetailsResult) => {
+      if(fetcherror){
+        return res.status(401).json({message : 'Error While Fetching Intern Details'});
+      }
+      if(internDetailsResult.length === 0){
+        return res.status(404).json({message : 'No intern Details Found'});
+      }
+      res.json({getInternDetails : internDetailsResult});
+    });
+  }catch(errro){
+    res.status(500).json({message : 'Internal Server Error'});
+  }
+}
+
 // Helper function to generate a unique 10-digit user ID
 function generateUserId() {
   const userIdLength = 10;
@@ -492,5 +528,7 @@ module.exports = {
   acceptAttendence,
   taskUpdate,
   getTaskSheet,
+  getInternDetails,
+  getSupervisorDetails,
 
 };

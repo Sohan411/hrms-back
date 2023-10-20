@@ -31,6 +31,9 @@ router.get('/getLeaveByUserID/:userId', sa.getLeaveByUserId);
 router.post('/acceptAttendence/:userId', sa.acceptAttendence);
 router.post('/taskUpdate',sa.taskUpdate);
 router.get('/getTaskSheet',sa.getTaskSheet);
+router.get('/getInternDetails', sa.getInternDetails);
+router.get('/getSupervisorDetails', sa.getSupervisorDetails);
+
 
 //Dashboard
 router.post('/leave', dashboard.internLeave);
