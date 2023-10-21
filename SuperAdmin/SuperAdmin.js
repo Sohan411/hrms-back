@@ -369,14 +369,14 @@ function taskUpdate(req, res){
   projectTitle,
   deadLine,
   remarks,
-  status,
   startDate,
   endDate,
-  priority
+  priority,
+  isCompleted
 } = req.body;
 
   const fetchUserIdQuery = `SELECT * FROM hrms_users WHERE UserId = ?`;
-  const insertQuery = `INSERT INTO intern_tasksheet(UserId, EmployeeName, EmployeeId, ProjectTitle, Deadline, Remarks, Status,DateRange,Priority) VALUES(?, ?, ?, ?, ?, ?, ?, ?)`;
+  const insertQuery = `INSERT INTO intern_tasksheet(UserId, EmployeeName, EmployeeId, ProjectTitle, Deadline, Remarks, DateRange,Priority, IsCompleted) VALUES(?, ?, ?, ?, ?, ?, ?, ?)`;
 
 
   db.query(fetchUserIdQuery,[userId], (fetchError, fetchResult) => {
@@ -392,10 +392,10 @@ function taskUpdate(req, res){
       projectTitle,
       deadLine,
       remarks,
-      status,
       startDate,
       endDate,
-      priority], (error, result)=>{
+      priority,
+      '0'], (error, result)=>{
         if(error){
           return res.status(401).json({message : 'Error Inserting data'});
         }
@@ -453,6 +453,21 @@ function getSupervisorDetails(req, res){
       res.json({getInternDetails : internDetailsResult});
     });
   }catch(errro){
+    res.status(500).json({message : 'Internal Server Error'});
+  }
+}
+
+function getOnGoingProjects(req, res){
+  const fetchProjectsQuery = `SELECT ProjectTitle FROM intern_tasksheet WHERE IsCompelete = '0'`;
+
+  try{
+    db.query(fetchProjectsQuery, (fetchError, fetchResult) => {
+      if(fetchError){
+        return res.status(401).json({message : 'error while fetching employee list'});
+      }
+      res.json({getOnGoingProjects : fetchResult});
+    });
+  }catch(error){
     res.status(500).json({message : 'Internal Server Error'});
   }
 }
@@ -547,5 +562,6 @@ module.exports = {
   getInternDetails,
   getSupervisorDetails,
   getEmpolyeesByProject,
+  getOnGoingProjects,
 
 };
