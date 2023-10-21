@@ -363,21 +363,20 @@ function acceptAttendence(req, res){
 }
 
 function taskUpdate(req, res){
-  const userId = req.params;
   const {employeeName,
-  employeeId,
-  projectTitle,
-  deadLine,
+  employeeEmail,
+  supervisorEmail,
+  status,
   remarks,
   startDate,
   endDate,
   priority,
-  isCompleted
 } = req.body;
 
   const fetchUserIdQuery = `SELECT * FROM hrms_users WHERE UserId = ?`;
-  const insertQuery = `INSERT INTO intern_tasksheet(UserId, EmployeeName, EmployeeId, ProjectTitle, Deadline, Remarks, DateRange,Priority, IsCompleted) VALUES(?, ?, ?, ?, ?, ?, ?, ?)`;
+  const insertQuery = `INSERT INTO intern_tasksheet(TaskSheetID, EmployeeName, EmployeeEmail, SupervisorEmail, Status, Remarks, StartDate, EndDate, Priority, Remark) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
+  const taskSheetID = generateTasksheetId();
 
   db.query(fetchUserIdQuery,[userId], (fetchError, fetchResult) => {
     if(fetchError){
@@ -386,16 +385,16 @@ function taskUpdate(req, res){
     if(fetchResult.lentgth === 0){
       return res.status(404).json({message : 'User Not Found'});
     } 
-    db.query(insertQuery, [userId,
+    db.query(insertQuery, [
+      taskSheetID,
       employeeName,
-      employeeId,
-      projectTitle,
-      deadLine,
+      employeeEmail,
+      supervisorEmail,
+      status,
       remarks,
       startDate,
       endDate,
-      priority,
-      '0'], (error, result)=>{
+      priority,], (error, result)=>{
         if(error){
           return res.status(401).json({message : 'Error Inserting data'});
         }
@@ -463,7 +462,7 @@ function getOnGoingProjects(req, res){
   try{
     db.query(fetchProjectsQuery, (fetchError, fetchResult) => {
       if(fetchError){
-        return res.status(401).json({message : 'error while fetching employee list'});
+        return res.status(401).json({message : 'error while fetching project list'});
       }
       res.json({getOnGoingProjects : fetchResult});
     });
@@ -500,6 +499,20 @@ function generateUserId() {
     userId += characters.charAt(randomIndex);
   }
   return userId;
+}
+
+// Helper function to generate a unique 10-digit user ID
+function generateTasksheetId() {
+  const userIdLength = 15;
+  let TasksheetId = '';
+
+  const characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+
+  for (let i = 0; i < userIdLength; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    userId += characters.charAt(randomIndex);
+  }
+  return TasksheetId;
 }
 
 function sendTokenDashboardEmail(email, token) {
