@@ -457,6 +457,22 @@ function getSupervisorDetails(req, res){
   }
 }
 
+function getEmpolyeesByProject(req, res){
+  const { projectTitle } = req.body;
+  const fetchEmployeeQuery = `SELECT * FROM intern_tasksheet WHERE ProjectTitle = ?`;
+
+  try{
+    db.query(fetchEmployeeQuery, [projectTitle], (fetchError, fetchResult) => {
+      if(fetchError){
+        return res.status(401).json({message : 'error while fetching employee list'});
+      }
+      res.json({getEmpolyeesByProject : fetchResult});
+    } );
+  }catch(error){
+    res.status(500).json({message : 'Internal Server Error'});
+  }
+}
+
 // Helper function to generate a unique 10-digit user ID
 function generateUserId() {
   const userIdLength = 10;
@@ -530,5 +546,6 @@ module.exports = {
   getTaskSheet,
   getInternDetails,
   getSupervisorDetails,
+  getEmpolyeesByProject,
 
 };

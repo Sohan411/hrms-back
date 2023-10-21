@@ -33,7 +33,7 @@ router.post('/taskUpdate',sa.taskUpdate);
 router.get('/getTaskSheet',sa.getTaskSheet);
 router.get('/getInternDetails', sa.getInternDetails);
 router.get('/getSupervisorDetails', sa.getSupervisorDetails);
-
+router.get('/getEmployeesByProject', sa.getEmpolyeesByProject);
 
 //Dashboard
 router.post('/leave', dashboard.internLeave);
