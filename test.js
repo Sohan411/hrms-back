@@ -75,3 +75,14 @@ db.query(fetchInTime, [inTime, userId],( fetchInTimeerror, InTimeresult) => {
   });
 
 });
+
+
+
+"employeeName" : "dsafj",
+"employeeEmail" : "daslkjfa",
+"supervisorEmail" : "askdjflkasf",
+"status" : "asjkdflkasdf",
+"remarks" : "akldsjfklasf",
+"startDate" : "asdjflkasd",
+"endDate" : "12-10-2023",
+"priority": "15-10-2023"

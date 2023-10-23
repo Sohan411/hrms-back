@@ -373,33 +373,22 @@ function taskUpdate(req, res){
   priority,
 } = req.body;
 
-  const fetchUserIdQuery = `SELECT * FROM hrms_users WHERE UserId = ?`;
-  const insertQuery = `INSERT INTO intern_tasksheet(TaskSheetID, EmployeeName, EmployeeEmail, SupervisorEmail, Status, Remarks, StartDate, EndDate, Priority, Remark) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+  const insertQuery = `INSERT INTO intern_tasksheet(EmployeeName, EmployeeEmail, SupervisorEmail, Status, Remark, StartDate, EndDate, Priority) VALUES(?, ?, ?, ?, ?, ?, ?, ?)`;
 
-  const taskSheetID = generateTasksheetId();
-
-  db.query(fetchUserIdQuery,[userId], (fetchError, fetchResult) => {
-    if(fetchError){
-      return res.status(401).json({message : 'Error Fetching UserID'});
-    }
-    if(fetchResult.lentgth === 0){
-      return res.status(404).json({message : 'User Not Found'});
-    } 
-    db.query(insertQuery, [
-      taskSheetID,
-      employeeName,
-      employeeEmail,
-      supervisorEmail,
-      status,
-      remarks,
-      startDate,
-      endDate,
-      priority,], (error, result)=>{
-        if(error){
-          return res.status(401).json({message : 'Error Inserting data'});
-        }
-        return res.status(200).json({messgae : 'Task Updated Successfully'})
-      });
+  db.query(insertQuery, [
+    employeeName,
+    employeeEmail,
+    supervisorEmail,
+    status,
+    remarks,
+    startDate,
+    endDate,
+    priority,], (error, result)=>{
+      if(error){
+        console.log(error);
+        return res.status(401).json({message : 'Error Inserting data'});
+      }
+      return res.status(200).json({messgae : 'Task Updated Successfully'})
     });
 }
 
