@@ -438,7 +438,7 @@ function getSupervisorDetails(req, res){
       if(internDetailsResult.length === 0){
         return res.status(404).json({message : 'No intern Details Found'});
       }
-      res.json({getSupervisorDetails : internDetailsResult});
+      res.json({getSupervisiorDetails : internDetailsResult});
     });
   }catch(errro){
     res.status(500).json({message : 'Internal Server Error'});
