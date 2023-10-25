@@ -362,8 +362,39 @@ function acceptAttendence(req, res){
   }); 
 }
 
-function taskUpdate(req, res){
-  const {employeeName,
+function getProjectName(req,res){
+  const fetchQuery = `SELECT * FROM project_details WHERE Status = 'OnGoing'`;
+
+  db.query(fetchQuery, (error, fetchResult) => {
+    if(error){
+      return res.status(401).json({message : 'Error While Fetching Project Names'});
+    }
+    if(fetchResult.length === 0){
+      return res.status(404).json({message : 'NO Projects Found'});
+    }
+    res.json({getProjectName : fetchResult});
+  });
+}
+
+function getCompletedProject(req,res){
+  const fetchQuery = `SELECT * FROM project_details WHERE Status = 'Completed'`;
+
+  db.query(fetchQuery, (error, fetchResult) => {
+    if(error){
+      return res.status(401).json({message : 'Error While Fetching Project Names'});
+    }
+    if(fetchResult.length === 0){
+      return res.status(404).json({message : 'NO Projects Found'});
+    }
+    res.json({getProjectName : fetchResult});
+  });
+}
+
+function assignTask(req, res){
+  
+  const projectId = req.params;
+  const {
+  employeeName,
   employeeEmail,
   supervisorEmail,
   status,
@@ -371,11 +402,46 @@ function taskUpdate(req, res){
   startDate,
   endDate,
   priority,
+  projectTitle,
+  supervisorName,
 } = req.body;
 
-  const insertQuery = `INSERT INTO intern_tasksheet(EmployeeName, EmployeeEmail, SupervisorEmail, Status, Remark, StartDate, EndDate, Priority) VALUES(?, ?, ?, ?, ?, ?, ?, ?)`;
+  const fetchProjectId = `SELECT * FORM project_details WHERE ProjectId = ?`;
+  const insertQuery = `INSERT INTO intern_tasksheet(EmployeeName, EmployeeEmail, SupervisorEmail, Status, Remark, StartDate, EndDate, Priority, ProjectId, ProjectTitle, SupervisorName) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
-  db.query(insertQuery, [
+  db.query(fetchProjectId, [projectId], (fetcherror, fetchResult)  =>{ 
+    if(fetcherror){
+      return res.status(401).json({message : 'Error While Fetching Project ID'});
+    }
+    if(fetchResult.length === 0){
+      return res.status (404).json({message : 'No Projects Found'});
+    }
+    db.query(insertQuery, [
+      employeeName,
+      employeeEmail,
+      supervisorEmail,
+      status,
+      remarks,
+      startDate,
+      endDate,
+      priority,
+      projectId,
+      projectTitle,
+      supervisorName,
+    ], (error, result)=>{
+        if(error){
+          console.log(error);
+          return res.status(401).json({message : 'Error Inserting data'});
+        }
+        return res.status(200).json({messgae : 'Task Updated Successfully'})
+      });
+    });
+}
+
+function editTask(req, res){
+  
+  const tasksheetId = req.params.tasksheetId
+  const {
     employeeName,
     employeeEmail,
     supervisorEmail,
@@ -383,12 +449,27 @@ function taskUpdate(req, res){
     remarks,
     startDate,
     endDate,
-    priority,], (error, result)=>{
-      if(error){
-        console.log(error);
-        return res.status(401).json({message : 'Error Inserting data'});
+    priority,
+    projectTitle,
+    supervisorName,
+  } = req.body; 
+
+  const editTaskQuery = `UPDATE intern_tasksheet SET EmployeeName = ?, EmployeeEmail = ?, SupervisorEmail = ?, Status = ?, SupervisorEmail = ?, Priority = ?, StartDate = ?, EndDate = ?, Remark = ?, ProjectId = ?, SupervisorName = ?, ProjectTitle = ?`;
+
+  db.query(editTaskQuery, [
+    employeeEmail,
+    supervisorEmail,
+    status,
+    remarks,
+    startDate,
+    endDate,
+    priority,
+    projectTitle,
+    supervisorName], (updateError, updateResult) =>{
+      if(updateError){
+        return res.status(401).json({message : 'Error Updating Task'});
       }
-      return res.status(200).json({messgae : 'Task Updated Successfully'})
+      return res.status(200).json({message : 'Updated Successfully'});
     });
 }
 
@@ -445,21 +526,6 @@ function getSupervisorDetails(req, res){
   }
 }
 
-function getOnGoingProjects(req, res){
-  const fetchProjectsQuery = `SELECT ProjectTitle FROM intern_tasksheet WHERE IsCompelete = '0'`;
-
-  try{
-    db.query(fetchProjectsQuery, (fetchError, fetchResult) => {
-      if(fetchError){
-        return res.status(401).json({message : 'error while fetching project list'});
-      }
-      res.json({getOnGoingProjects : fetchResult});
-    });
-  }catch(error){
-    res.status(500).json({message : 'Internal Server Error'});
-  }
-}
-
 function getEmpolyeesByProject(req, res){
   const { projectTitle } = req.body;
   const fetchEmployeeQuery = `SELECT * FROM intern_tasksheet WHERE ProjectTitle = ?`;
@@ -475,6 +541,8 @@ function getEmpolyeesByProject(req, res){
     res.status(500).json({message : 'Internal Server Error'});
   }
 }
+
+
 
 // Helper function to generate a unique 10-digit user ID
 function generateUserId() {
@@ -559,11 +627,13 @@ module.exports = {
   getLeaveInfoByDate,
   getLeaveByUserId,
   acceptAttendence,
-  taskUpdate,
+  assignTask,
   getTaskSheet,
   getInternDetails,
   getSupervisorDetails,
   getEmpolyeesByProject,
-  getOnGoingProjects,
+  getProjectName,
+  getCompletedProject,
+  editTask,
 
 };
