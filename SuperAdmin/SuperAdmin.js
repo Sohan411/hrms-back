@@ -160,8 +160,53 @@ function userdetails(req, res) {
 }
 
 
+
+
+
+function deleteTask(req, res) {
+  
+  const taskId = req.params.taskId;
+  const checkTaskSheetID =`SELECT * FROM intern_tasksheet WHERE TaskSheetID =?`
+  const deleteQuery = 'DELETE FROM intern_tasksheet WHERE TaskSheetID = ?';
+  try {
+    db.query(checkTaskSheetID, [taskId], (checkError, checkResult)=>{
+      if(checkError) {
+        return res.status(401).json({message: 'error during checking task sheet id'})
+      }
+      if(checkResult.length === 0 ){
+        return res.status(404).json({ message: 'no task found'})
+      }
+      db.query(deleteQuery, [taskId] ,(error, result) => {
+        if (error) {
+          return res.status(401).json({ message: 'error during deleting' });
+        }
+
+        if (result.affectedRows === 0) {
+          return res.status(404).json({ message: 'Task not found' });
+        }
+
+        res.status(200).json({ message: 'Task deleted' });
+      });
+    });
+  } catch (error) {
+    console.error('An error occurred:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+  
+}
+
+
+
+
+
+
+
+
+
+
+
 function UpdateLeaveApproval(req, res) {
-  const { UserId } = req.params;
+  const { leaveId } = req.params;
   const { action } = req.body;
 
   const approvalId = uuidv4();
@@ -635,5 +680,6 @@ module.exports = {
   getProjectName,
   getCompletedProject,
   editTask,
+  deleteTask,
 
 };

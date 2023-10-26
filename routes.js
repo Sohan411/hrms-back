@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const authentication = require('./Authentication/authentication');
 const sa = require('./SuperAdmin/SuperAdmin');
-const dashboard = require('./Dash/dashboard');
+const dashboard = require('./dash/dashboard');
 
 
 // Registration route
@@ -37,6 +37,8 @@ router.get('/getEmployeesByProject', sa.getEmpolyeesByProject);
 router.get('/getProjects', sa.getProjectName);
 router.get('/getCompletedProjects', sa.getCompletedProject);
 router.put('/editTask', sa.editTask);
+router.delete('/deleteTask/:taskId', sa.deleteTask);
+
 
 
 
