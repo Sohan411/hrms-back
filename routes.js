@@ -38,9 +38,8 @@ router.get('/getProjects', sa.getProjectName);
 router.get('/getCompletedProjects', sa.getCompletedProject);
 router.put('/editTask', sa.editTask);
 router.delete('/deleteTask/:taskId', sa.deleteTask);
-router.post('/createDivison', sa.createDivision);
-router.put('/updateDivision',sa.updateDivision);
-
+router.delete('/deleteDivision/:divisionId', sa.deleteDivision);
+router.get('/getDesignation',sa.getDesignation);
 
 
 //Dashboard

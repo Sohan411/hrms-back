@@ -195,6 +195,11 @@ function deleteTask(req, res) {
   
 }
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 5b21bd9d137449a3f0284965ec61ea816d796662
 function UpdateLeaveApproval(req, res) {
   const { leaveId } = req.params;
   const { action } = req.body;
@@ -672,6 +677,7 @@ function sendTokenDashboardEmail(email, token) {
   });
 }
 
+<<<<<<< HEAD
 function formatDate(date) {
   const year = date.getFullYear();
   const month = date.getMonth() + 1;
@@ -679,6 +685,90 @@ function formatDate(date) {
   return `${year}-${month}-${day}`;
 }
 
+=======
+
+// function totalhourscount (req,res) {
+//   const  TotalHours = req.params.userId;
+//   // const { currentDate = new Date() } = req.body;
+
+//   const fetchTotalHours = `SELECT * FROM intern_attendence WHERE date = ? `;
+
+
+//   db.query (fetchTotalHours, [TotalHours], (userIdError, userResult) => {
+//     if (userIdError) {
+//       console.error(userIdError);
+//       return res.status(401).json({ message: 'Internal server error while fetching attendence' });
+//     }
+
+//     if (userResult.length === 0) {
+//       return res.status(404).json({ message: 'attendence not found' });
+//     }
+// });
+
+
+
+
+function getDesignation (req,res) {
+  const fetchdesignation = `SELECT Division, count(*) FROM hrms_users GROUP BY Division;`;
+
+  db.query (fetchdesignation, (queryError, queryResult) => {
+    if (queryError) {
+      console.error(queryError);
+      return res.status(401).json({ message: 'Internal server error while fetching designation' });
+    }
+
+    if (queryResult.length === 0) {
+      return res.status(404).json({ message: 'designation not found' });
+    }
+    const designationData = queryResult.map((result) => ({
+      label: result.Division,
+      data: result.count,
+    }));
+    res.status(200).json({ designations: designationData });
+});
+}
+
+
+
+function deleteDivision(req, res) {
+  const divisionId = req.params.divisionId;
+  const deleteQuery = 'DELETE FROM employee_division WHERE DivisionId =?';
+  try {
+      db.query(deleteQuery, [divisionId] ,(error, result) => {
+        if (error) {
+          return res.status(401).json({ message: 'error during deleting' });
+        }
+
+        if (result.affectedRows === 0) {
+          return res.status(404).json({ message: 'Task not found' });
+        }
+
+        res.status(200).json({ message: 'Task deleted' });
+      });
+  } catch (error) {
+    console.error('An error occurred:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+>>>>>>> 5b21bd9d137449a3f0284965ec61ea816d796662
 module.exports = {
   logExecution,
   addUser,
@@ -701,7 +791,13 @@ module.exports = {
   getCompletedProject,
   editTask,
   deleteTask,
+<<<<<<< HEAD
   createDivision,
   updateDivision,
+=======
+  // totalhourscount,
+  getDesignation,
+  deleteDivision,
+>>>>>>> 5b21bd9d137449a3f0284965ec61ea816d796662
 
 };
