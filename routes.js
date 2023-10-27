@@ -42,6 +42,7 @@ router.delete('/deleteDivision/:divisionId', sa.deleteDivision);
 router.get('/getDesignation',sa.getDesignation);
 router.post('/createDivison', sa.createDivision);
 router.put('/updateDivison',sa.updateDivision);
+router.get('/getDivision',sa.getDivision);
 
 
 
