@@ -63,7 +63,7 @@ function internLeave(req, res) {
   }
 }
 
-function attendance(req, res) {
+function inTime(req, res) {
   const  userId = req.params.userId;
   const { currentDate = new Date() } = req.body;
 
@@ -136,8 +136,21 @@ function updateOutTime (req, res){
         console.log(err);
         return res.status(401).json({message : 'error while updating'})
       }
+      updateTotalHours();
       return res.status(200).json({message : 'Out Time Marked Successfully'});
     });
+  });
+}
+
+function updateTotalHours() {
+  const query = 'UPDATE intern_attendence SET TotalHours = TIMESTAMPDIFF(SECOND, InTime, OutTime) / 3600 WHERE DATE(InTime) = DATE(OutTime)';
+  
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error updating TotalHours:', err);
+    } else {
+      console.log('TotalHours updated successfully.');
+    }
   });
 }
 
@@ -234,7 +247,7 @@ function getTaskSheetByUserId(req, res) {
 
 module.exports = {
   internLeave,
-  attendance,
+  inTime,
   updateOutTime,
   internInfo,
   getTaskSheetByUserId,

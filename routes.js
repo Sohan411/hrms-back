@@ -49,7 +49,7 @@ router.get('/getDivision',sa.getDivision);
 
 //Dashboard
 router.post('/leave', dashboard.internLeave);
-router.post('/attendence/:userId', dashboard.attendance);
+router.post('/inTime/:userId', dashboard.inTime);
 router.put('/updateOutTime/:userId', dashboard.updateOutTime);
 router.post('/internInfo/:userId', dashboard.internInfo);
 

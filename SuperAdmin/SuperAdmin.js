@@ -575,7 +575,7 @@ function getEmpolyeesByProject(req, res){
 function createDivision(req, res){
   const {divisionName, createdBy} = req.body;
 
-  const insertDivisionQury = `INSERT INTO employee_divison (DivisionName, CreatedBy) Values (?, ?)`;
+  const insertDivisionQury = `INSERT INTO employee_division (DivisionName, CreatedBy) Values (?, ?)`;
 
   db.query(insertDivisionQury,[divisionName, createdBy], (insertError, insertResult) =>{
     if(insertError){
@@ -590,7 +590,7 @@ function updateDivision(req,res){
   const {divisionName, createdBy} = req.body;
   const divisionId = req.params.divisionId
 
-  const updateDivisonQuery = `UPDATE DivisionName = ?, CreatedBy = ? WHERE DivisionId = ?`;
+  const updateDivisonQuery = `UPDATE employee_division DivisionName = ?, CreatedBy = ? WHERE DivisionId = ?`;
 
   db.query(updateDivisonQuery ,[divisionName, createdBy, divisionId], (updateError, updateResult) =>{
     if(updateError){
@@ -726,6 +726,7 @@ function getDivision(req,res){
   try{
     db.query(fetchDivisionQuery,(divisionError,divisionResult)=>{
       if(divisionError){
+        console.log(divisionError);
         return res.status(401).json({message: 'error while fetching'})
       }
       if(divisionResult.length===0){
