@@ -40,6 +40,8 @@ router.put('/editTask', sa.editTask);
 router.delete('/deleteTask/:taskId', sa.deleteTask);
 router.delete('/deleteDivision/:divisionId', sa.deleteDivision);
 router.get('/getDesignation',sa.getDesignation);
+router.post('/createDivison', sa.createDivision);
+router.put('/updateDivison',sa.updateDivision);
 
 
 //Dashboard

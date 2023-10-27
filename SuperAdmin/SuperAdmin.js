@@ -195,11 +195,6 @@ function deleteTask(req, res) {
   
 }
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> 5b21bd9d137449a3f0284965ec61ea816d796662
 function UpdateLeaveApproval(req, res) {
   const { leaveId } = req.params;
   const { action } = req.body;
@@ -597,7 +592,7 @@ function updateDivision(req,res){
 
   const updateDivisonQuery = `UPDATE DivisionName = ?, CreatedBy = ? WHERE DivisionId = ?`;
 
-  db.query(updateDivision [divisionName, createdBy, divisionId], (updateError, updateResult) =>{
+  db.query(updateDivisonQuery ,[divisionName, createdBy, divisionId], (updateError, updateResult) =>{
     if(updateError){
       return res.status(401).json({message : 'Error Updating Division'});
     }
@@ -619,20 +614,6 @@ function generateUserId() {
     userId += characters.charAt(randomIndex);
   }
   return userId;
-}
-
-// Helper function to generate a unique 10-digit user ID
-function generateTasksheetId() {
-  const userIdLength = 15;
-  let TasksheetId = '';
-
-  const characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-
-  for (let i = 0; i < userIdLength; i++) {
-    const randomIndex = Math.floor(Math.random() * characters.length);
-    userId += characters.charAt(randomIndex);
-  }
-  return TasksheetId;
 }
 
 function sendTokenDashboardEmail(email, token) {
@@ -676,17 +657,6 @@ function sendTokenDashboardEmail(email, token) {
     });
   });
 }
-
-<<<<<<< HEAD
-function formatDate(date) {
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  return `${year}-${month}-${day}`;
-}
-
-=======
-
 // function totalhourscount (req,res) {
 //   const  TotalHours = req.params.userId;
 //   // const { currentDate = new Date() } = req.body;
@@ -752,23 +722,6 @@ function deleteDivision(req, res) {
   
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
->>>>>>> 5b21bd9d137449a3f0284965ec61ea816d796662
 module.exports = {
   logExecution,
   addUser,
@@ -791,13 +744,10 @@ module.exports = {
   getCompletedProject,
   editTask,
   deleteTask,
-<<<<<<< HEAD
   createDivision,
   updateDivision,
-=======
   // totalhourscount,
   getDesignation,
   deleteDivision,
->>>>>>> 5b21bd9d137449a3f0284965ec61ea816d796662
 
 };
