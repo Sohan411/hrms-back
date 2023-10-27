@@ -195,8 +195,6 @@ function deleteTask(req, res) {
   
 }
 
-
-
 function UpdateLeaveApproval(req, res) {
   const { leaveId } = req.params;
   const { action } = req.body;
@@ -339,26 +337,21 @@ function getLeaveInfo(req, res){
   }
 }
 
-function getLeaveInfoByDate(req, res){
-  const { currentDate = new Date() } = req.body;
+function getLeaveInfoByDate(req, res) {
+  const currentDate = new Date();
+  const formattedCurrentDate = currentDate.toISOString().split('T')[0];
 
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth() + 1;
-  const day = currentDate.getDate();
+  const employeeOnLeaveQuery = `SELECT * FROM intern_leave WHERE STR_TO_DATE(StartDate, '%Y-%m-%d') <= ? AND STR_TO_DATE(EndDate, '%Y-%m-%d') >= ?`;
 
-  const formattedDate = `${year}-${month}-${day}`;
-
-  const employeeOnLeaveQuery = `SELECT * FROM intern_leave WHERE StartDate = ?`;
-
-  db.query(employeeOnLeaveQuery, [formattedDate], (errorfetching, result) => {
-    if(errorfetching){
+  db.query(employeeOnLeaveQuery, [formattedCurrentDate, formattedCurrentDate], (errorfetching, result) => {
+    if (errorfetching) {
       console.log(errorfetching);
-      return res.status(401).json({ message : 'error fetching data' });
+      return res.status(401).json({ message: 'Error fetching data' });
     }
-    if(result.length === 0){
-      return res.status(404).json({message : 'No Leaves Found'});
+    if (result.length === 0) {
+      return res.status(404).json({ message: 'No Leaves Found' });
     }
-    res.json({getLeaveInfoByDate : result});
+    res.json({ getLeaveInfoByDate: result });
   });
 }
 
@@ -579,6 +572,34 @@ function getEmpolyeesByProject(req, res){
   }
 }
 
+function createDivision(req, res){
+  const {divisionName, createdBy} = req.body;
+
+  const insertDivisionQury = `INSERT INTO employee_divison (DivisionName, CreatedBy) Values (?, ?)`;
+
+  db.query(insertDivisionQury,[divisionName, createdBy], (insertError, insertResult) =>{
+    if(insertError){
+      console.log(insertError);
+      return res.status(401).json({message : 'Error Inserting Divison'});
+    }
+    return res.status(200).json({message : 'Division Name Entered Successfully'});
+  });
+}
+
+function updateDivision(req,res){
+  const {divisionName, createdBy} = req.body;
+  const divisionId = req.params.divisionId
+
+  const updateDivisonQuery = `UPDATE DivisionName = ?, CreatedBy = ? WHERE DivisionId = ?`;
+
+  db.query(updateDivisonQuery ,[divisionName, createdBy, divisionId], (updateError, updateResult) =>{
+    if(updateError){
+      return res.status(401).json({message : 'Error Updating Division'});
+    }
+    return res.status(200).json({message : 'Division Updated Successfully'});
+  });
+}
+
 
 
 // Helper function to generate a unique 10-digit user ID
@@ -593,20 +614,6 @@ function generateUserId() {
     userId += characters.charAt(randomIndex);
   }
   return userId;
-}
-
-// Helper function to generate a unique 10-digit user ID
-function generateTasksheetId() {
-  const userIdLength = 15;
-  let TasksheetId = '';
-
-  const characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-
-  for (let i = 0; i < userIdLength; i++) {
-    const randomIndex = Math.floor(Math.random() * characters.length);
-    userId += characters.charAt(randomIndex);
-  }
-  return TasksheetId;
 }
 
 function sendTokenDashboardEmail(email, token) {
@@ -650,8 +657,6 @@ function sendTokenDashboardEmail(email, token) {
     });
   });
 }
-
-
 // function totalhourscount (req,res) {
 //   const  TotalHours = req.params.userId;
 //   // const { currentDate = new Date() } = req.body;
@@ -716,6 +721,7 @@ function deleteDivision(req, res) {
   }
 }
 
+<<<<<<< HEAD
 
 
 
@@ -757,6 +763,8 @@ function getDivision(req,res){
 
 
 
+=======
+>>>>>>> 077e012a4382aa31dc04f3d07f266a6b1d2d0e01
 module.exports = {
   logExecution,
   addUser,
@@ -779,6 +787,8 @@ module.exports = {
   getCompletedProject,
   editTask,
   deleteTask,
+  createDivision,
+  updateDivision,
   // totalhourscount,
   getDesignation,
   deleteDivision,
