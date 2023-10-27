@@ -714,12 +714,36 @@ function deleteDivision(req, res) {
     console.error('An error occurred:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
-  
 }
 
 
 
 
+
+
+
+
+
+
+function getDivision(req,res){
+  const fetchDivisionQuery = 'SELECT * FROM employee_division';
+  try{
+    db.query(fetchDivisionQuery,(divisionError,divisionResult)=>{
+      if(divisionError){
+        return res.status(401).json({message: 'error while fetching'})
+      }
+      if(divisionResult.length===0){
+        return res.status(404).json({message: 'division not found'})
+      }
+      res.json({getDivision:divisionResult});
+    })
+
+  }catch (error){
+    res.status(500).json({message: 'internal server error'})
+
+  }
+
+}
 
 
 
@@ -758,5 +782,6 @@ module.exports = {
   // totalhourscount,
   getDesignation,
   deleteDivision,
+  getDivision,
 
 };
