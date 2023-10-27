@@ -721,15 +721,6 @@ function deleteDivision(req, res) {
   }
 }
 
-<<<<<<< HEAD
-
-
-
-
-
-
-
-
 
 function getDivision(req,res){
   const fetchDivisionQuery = 'SELECT * FROM employee_division';
@@ -763,8 +754,6 @@ function getDivision(req,res){
 
 
 
-=======
->>>>>>> 077e012a4382aa31dc04f3d07f266a6b1d2d0e01
 module.exports = {
   logExecution,
   addUser,
