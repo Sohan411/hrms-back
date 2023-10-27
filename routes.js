@@ -39,6 +39,8 @@ router.get('/getCompletedProjects', sa.getCompletedProject);
 router.put('/editTask', sa.editTask);
 router.delete('/deleteTask/:taskId', sa.deleteTask);
 router.get('/getDesignation',sa.getDesignation);
+router.delete('/deleteDivision/:divisionId', sa.deleteDivision);
+
 
 
 
