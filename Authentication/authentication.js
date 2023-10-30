@@ -14,7 +14,7 @@ const { logExecution } = require('../SuperAdmin/SuperAdmin');
 encryptKey = "SenseLive-Hrms-Dashboard";
 
 // Function to send an email with the token
-function sendTokenEmail(email, token, firstName, lastName) {
+function sendTokenEmail(email, token, name) {
   const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 465,
@@ -37,7 +37,7 @@ function sendTokenEmail(email, token, firstName, lastName) {
     const compiledTemplate = ejs.compile(templateData);
 
     // Render the template with the token and recipient's name
-    const html = compiledTemplate({token, firstName, lastName});
+    const html = compiledTemplate({token, name});
 
     const mailOptions = {
       from: 'your-email@example.com', // Replace with the sender's email address
@@ -223,7 +223,7 @@ function register(req, res) {
 
                   try {
                     // Send the verification token to the user's email
-                    sendTokenEmail(companyEmail, verificationToken, firstName, lastName);
+                    sendTokenEmail(companyEmail, verificationToken, name);
 
                     console.log('User registered successfully');
                     res.json({ message: 'Registration successful. Check your email for the verification token.' });
@@ -317,7 +317,7 @@ function register_dashboard(req, res) {
 
               try {
                 // Send the verification token to the user's email
-                sendTokenDashboardEmail(companyEmail, verificationToken);
+                // sendTokenDashboardEmail(companyEmail, verificationToken);
 
                 console.log('User registered successfully');
                 res.json({ message: 'Registration successful. Check your email for the verification token.' });
