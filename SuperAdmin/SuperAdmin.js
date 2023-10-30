@@ -656,6 +656,7 @@ function sendTokenDashboardEmail(email, token) {
     });
   });
 }
+
 // function totalhourscount (req,res) {
 //   const  TotalHours = req.params.userId;
 //   // const { currentDate = new Date() } = req.body;
@@ -673,7 +674,7 @@ function sendTokenDashboardEmail(email, token) {
 //       return res.status(404).json({ message: 'attendence not found' });
 //     }
 // });
-
+// }
 
 
 
