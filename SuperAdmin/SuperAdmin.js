@@ -118,7 +118,7 @@ function addUser(req, res) {
 
               try {
                 // Send the verification token to the user's email
-                // sendTokenDashboardEmail(companyEmail, verificationToken);
+                sendTokenDashboardEmail(companyEmail, verificationToken);
 
                 console.log('User registered successfully');
                 res.json({ message: 'Registration successful. Check your email for the verification token.' });
@@ -421,6 +421,8 @@ function getCompletedProject(req,res){
 }
 
 function assignTask(req, res){
+  
+  const projectId = req.params;
   const {
   employeeName,
   employeeEmail,
@@ -430,21 +432,20 @@ function assignTask(req, res){
   startDate,
   endDate,
   priority,
+  projectTitle,
   supervisorName,
 } = req.body;
 
-  const fetchProjectId = `SELECT * FROM project_details WHERE ProjectId = ?`;
+  const fetchProjectId = `SELECT * FORM project_details WHERE ProjectId = ?`;
   const insertQuery = `INSERT INTO intern_tasksheet(EmployeeName, EmployeeEmail, SupervisorEmail, Status, Remark, StartDate, EndDate, Priority, ProjectId, ProjectTitle, SupervisorName) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
-  db.query(fetchProjectId, [status], (fetcherror, fetchResult)  =>{ 
+  db.query(fetchProjectId, [projectId], (fetcherror, fetchResult)  =>{ 
     if(fetcherror){
-      console.log(fetcherror);
       return res.status(401).json({message : 'Error While Fetching Project ID'});
     }
     if(fetchResult.length === 0){
       return res.status (404).json({message : 'No Projects Found'});
     }
-    projectTitle = fetchResult.ProjectTitle;
     db.query(insertQuery, [
       employeeName,
       employeeEmail,
@@ -454,7 +455,7 @@ function assignTask(req, res){
       startDate,
       endDate,
       priority,
-      fetchResult.ProjectId,
+      projectId,
       projectTitle,
       supervisorName,
     ], (error, result)=>{
@@ -678,32 +679,25 @@ function sendTokenDashboardEmail(email, token) {
 
 
 
-function getDesignation(req, res) {
-  // Define the SQL query to fetch division and count users
-  const fetchdesignation = `SELECT Division, COUNT(*) as totalUsers FROM hrms_users GROUP BY Division;`;
+function getDesignation (req,res) {
+  const fetchdesignation = `SELECT Division, count(*) FROM hrms_users GROUP BY Division;`;
 
-  // Execute the SQL query
-  db.query(fetchdesignation, (queryError, queryResult) => {
+  db.query (fetchdesignation, (queryError, queryResult) => {
     if (queryError) {
       console.error(queryError);
-      return res.status(500).json({ message: 'Internal server error while fetching designations' });
+      return res.status(401).json({ message: 'Internal server error while fetching designation' });
     }
 
     if (queryResult.length === 0) {
-      return res.status(404).json({ message: 'Designations not found' });
+      return res.status(404).json({ message: 'designation not found' });
     }
-
-    // Transform the result into the desired JSON structure
     const designationData = queryResult.map((result) => ({
       label: result.Division,
-      data: result.totalUsers,
+      data: result.count,
     }));
-
-    // Send a JSON response with the division and total users
     res.status(200).json({ designations: designationData });
-  });
+});
 }
-
 
 
 
@@ -749,31 +743,59 @@ function getDivision(req,res){
 
 }
 
-function deleteEmployee(req, res) {
-  const userId = req.params.UserId;
-  const checkUserIdQuery = `SELECT * FROM hrms_users WHERE UserId = ?`;
-  const deleteQuery = 'DELETE FROM hrms_users WHERE userId = ?';
 
-  db.query(checkUserIdQuery, [userId], (error, checkResult) => {
-    if (error) {
-      return res.status(401).json({ message: 'Error during checking user id' });
-    }
-    if (checkResult.length === 0) {
-      return res.status(404).json({ message: 'No user found' });
-    }
-    try {
-      db.query(deleteQuery, [userId], (deleteError, deleteResult) => {
-        if (deleteError) {
-          return res.status(401).json({ message: 'Error during deleting' });
-        }
-        res.status(200).json({ message: 'User deleted successfully!' });
-      });
-    } catch (error) {
-      console.error('An error occurred:', error);
-      res.status(500).json({ message: 'Internal server error' });
-    }
-  });
+function editUser(req, res){
+  
+  const userId = req.params.userId
+  const {
+    userName,
+    firstName,
+    lastName,
+    password,
+    companyEmail,
+    contactNo,
+    designation,
+    userType, 
+    dob,
+    totalWorkingDays,
+    supervisor,
+    joiningDate,
+    verified,
+    block,
+    verificationToken,
+    division,
+  } = req.body; 
+
+  const editUserQuery = `UPDATE hrms_users SET Username = ?, FirstName = ?, LastName = ?, Password = ?, UserType = ?, ContactNo = ?, Designation = ?, UserType = ?, DOB = ?, TotalWorkingDays = ?, Supervisor = ?, JoiningDate = ?, Verified = ?, block = ?, VerificationToken = ?, Division = ?`;
+
+  db.query(editUserQuery, [
+    userName,
+    firstName,
+    lastName,
+    password,
+    companyEmail,
+    contactNo,
+    designation,
+    userType,  
+    dob,
+    totalWorkingDays,
+    supervisor,
+    joiningDate,
+    verified,
+    block,
+    verificationToken,
+    division,  ], (updateError, updateResult) =>{
+      if(updateError){
+        return res.status(401).json({message : 'Error Updating Task'});
+      }
+      return res.status(200).json({message : 'Updated Successfully'});
+    });
 }
+
+
+
+
+
 
 module.exports = {
   logExecution,
@@ -803,5 +825,7 @@ module.exports = {
   getDesignation,
   deleteDivision,
   getDivision,
-  deleteEmployee
+  editUser,
+
+
 };
