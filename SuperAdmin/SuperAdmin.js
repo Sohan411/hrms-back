@@ -444,6 +444,7 @@ function assignTask(req, res){
     if(fetchResult.length === 0){
       return res.status (404).json({message : 'No Projects Found'});
     }
+    projectTitle = fetchResult.ProjectTitle;
     db.query(insertQuery, [
       employeeName,
       employeeEmail,
@@ -454,7 +455,7 @@ function assignTask(req, res){
       endDate,
       priority,
       fetchResult.ProjectId,
-      fetchResult.ProjectTitle,
+      projectTitle,
       supervisorName,
     ], (error, result)=>{
         if(error){
