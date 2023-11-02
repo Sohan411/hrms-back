@@ -1,88 +1,36 @@
-const db = require ('./db')
+function assignTask(req, res){
+  
+  const {
+  employeeName,
+  employeeEmail,
+  supervisorEmail,
+  status,
+  remark,
+  startDate,
+  endDate,
+  priority,
+  projectTitle,
+  supervisorName,
+} = req.body;
 
-// Function to calculate the number of weekdays between two dates
-function countWeekdays(startDate, endDate) {
-  let dayCounter = 0;
-  const currentDate = new Date(startDate);
+  const insertQuery = `INSERT INTO intern_tasksheet(EmployeeName, EmployeeEmail, SupervisorEmail, Status, Remark, StartDate, EndDate, Priority, ProjectTitle, SupervisorName) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
-  while (currentDate <= endDate) {
-    const dayOfWeek = currentDate.getDay();
-    if (dayOfWeek !== 0) { // Exclude Sundays (Sunday = 0)
-      dayCounter++;
-    }
-    currentDate.setDate(currentDate.getDate() + 1);
-  }
-
-  return dayCounter;
-}
-
-// Function to update DaysRemaining column for interns
-async function updateDaysRemaining() {
-
-  try {
-    const currentDate = new Date();
-    const query = 'SELECT UserId, JoiningDate, DaysRemaining, LeaveDates FROM hrms_users';
-    const [rows] = await db.query(query);
-
-    for (const row of rows) {
-      const leaveDates = row.LeaveDates ? row.LeaveDates.split(',').map(date => new Date(date.trim())) : [];
-      const workingDays = countWeekdays(row.JoiningDate, currentDate);
-
-      // Exclude leave days
-      for (const leaveDate of leaveDates) {
-        if (leaveDate >= row.JoiningDate && leaveDate <= currentDate) {
-          workingDays--;
+    db.query(insertQuery, [
+      employeeName,
+      employeeEmail,
+      supervisorEmail,
+      status,
+      remark,
+      startDate,
+      endDate,
+      priority,
+      projectTitle,
+      supervisorName,
+    ], (error, result)=>{
+        if(error){
+          console.log(error);
+          return res.status(401).json({message : 'Error Inserting data'});
         }
-      }
-
-      // Update the DaysRemaining column
-      const daysRemaining = Math.max(workingDays - row.DaysRemaining, 0);
-      await db.execute('UPDATE hrms_users SET DaysRemaining = ? WHERE UserId = ?', [daysRemaining, row.id]);
-    }
-
-    console.log('DaysRemaining updated successfully.');
-  } catch (error) {
-    console.error('Error updating DaysRemaining:', error);
-  }
+        return res.status(200).json({messgae : 'Task Updated Successfully'})
+    });
 }
-
-updateDaysRemaining();
-
-// Call the function to update DaysRemaining
-module.exports = { 
-    updateDaysRemaining 
-}
-
-
-
-
-
-const fetchInTime = `Select InTime from intern_attendence WHERE UserId = ?`;
-const updateTotalHours = `UPDATE intern_attendence SET TotalHours = ? WHERE UserId = ?`;
-
-db.query(fetchInTime, [inTime, userId],( fetchInTimeerror, InTimeresult) => {
-  if(fetchInTimeerror){
-    console.log(fetchInTimeerror)
-    return res.status(401).json({message : 'error while fetching In Time'})
-  }
-
-  db.query(updateTotalHours, [timeDifferenceHours, userId], (updateTotalHourserror, result) => {
-    if(updateTotalHourserror){
-      console.log(updateTotalHourserror);
-      return res.status(401).json({message : 'Error while updating total hours'});
-    }
-    return res.status(200).json({message : 'OutTime and Total Hours Updated Successfully'});
-  });
-
-});
-
-
-
-"employeeName" : "dsafj",
-"employeeEmail" : "daslkjfa",
-"supervisorEmail" : "askdjflkasf",
-"status" : "asjkdflkasdf",
-"remarks" : "akldsjfklasf",
-"startDate" : "asdjflkasd",
-"endDate" : "12-10-2023",
-"priority": "15-10-2023"
