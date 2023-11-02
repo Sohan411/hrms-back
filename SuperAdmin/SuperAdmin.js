@@ -446,6 +446,7 @@ function assignTask(req, res){
     if(fetchResult.length === 0){
       return res.status (404).json({message : 'No Projects Found'});
     }
+    user = fetchResult.rows[0];
     db.query(insertQuery, [
       employeeName,
       employeeEmail,
@@ -455,8 +456,8 @@ function assignTask(req, res){
       startDate,
       endDate,
       priority,
-      projectId,
-      projectTitle,
+      user.ProjectId,
+      user.ProjectTitle,
       supervisorName,
     ], (error, result)=>{
         if(error){
@@ -728,19 +729,17 @@ function getDivision(req,res){
     db.query(fetchDivisionQuery,(divisionError,divisionResult)=>{
       if(divisionError){
         console.log(divisionError);
-        return res.status(401).json({message: 'error while fetching'})
+        return res.status(401).json({message: 'error while fetching'});
       }
       if(divisionResult.length===0){
-        return res.status(404).json({message: 'division not found'})
+        return res.status(404).json({message: 'division not found'});
       }
       res.json({getDivision:divisionResult});
     })
 
   }catch (error){
-    res.status(500).json({message: 'internal server error'})
-
+    res.status(500).json({message: 'internal server error'});
   }
-
 }
 
 
@@ -766,7 +765,7 @@ function editUser(req, res){
     division,
   } = req.body; 
 
-  const editUserQuery = `UPDATE hrms_users SET Username = ?, FirstName = ?, LastName = ?, Password = ?, UserType = ?, ContactNo = ?, Designation = ?, UserType = ?, DOB = ?, TotalWorkingDays = ?, Supervisor = ?, JoiningDate = ?, Verified = ?, block = ?, VerificationToken = ?, Division = ?`;
+  const editUserQuery = `UPDATE hrms_users SET Username = ?, FirstName = ?, LastName = ?, Password = ?, ContactNo = ?, Designation = ?, UserType = ?, DOB = ?, TotalWorkingDays = ?, Supervisor = ?, JoiningDate = ?, Verified = ?, block = ?, VerificationToken = ?, Division = ? WHERE UserId = ?`;
 
   db.query(editUserQuery, [
     userName,
@@ -784,17 +783,14 @@ function editUser(req, res){
     verified,
     block,
     verificationToken,
-    division,  ], (updateError, updateResult) =>{
+    division, 
+    userId ], (updateError, updateResult) =>{
       if(updateError){
         return res.status(401).json({message : 'Error Updating Task'});
       }
       return res.status(200).json({message : 'Updated Successfully'});
     });
 }
-
-
-
-
 
 
 module.exports = {
@@ -826,6 +822,7 @@ module.exports = {
   deleteDivision,
   getDivision,
   editUser,
+
 
 
 };
