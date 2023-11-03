@@ -197,34 +197,30 @@ function deleteTask(req, res) {
 
 function UpdateLeaveApproval(req, res) {
   const { leaveId } = req.params;
-  const { action } = req.body;
 
-  const approvalId = uuidv4();
+  const updateLeaveQuery = `UPDATE intern_leave SET IsAproved = '1' WHERE LeaveId = ?`;
 
-  logExecution('UpdateLeaveApproval', approvalId, 'INFO', `Leave ${action} process started for UserId: ${UserId}`);
-
-  if (action !== 'approve' && action !== 'reject') {
-    logExecution('UpdateLeaveApproval', approvalId, 'ERROR', 'Invalid action. Use "approve" or "reject".');
-    return res.status(400).json({ message: 'Invalid action. Use "approve" or "reject".' });
-  }
-  const updateQuery = 'UPDATE intern_leave_info SET IsAproved = ? WHERE UserId = ?';
-  const approvalValue = action === 'approve' ? 'approve' : 'reject';
-
-  db.query(updateQuery, [approvalValue, UserId], (updateError, updateResult) => {
-    if (updateError) {
-      console.error(`Error during leave ${action}ing:`, updateError);
-      logExecution('UpdateLeaveApproval', approvalId, 'ERROR', `Error ${action}ing leave`);
-      return res.status(500).json({ message: `Error ${action}ing leave` });
+  db.query(updateLeaveQuery, [leaveId], (leaveUpdateError, leaveUpdateResult) => {
+    if(leaveUpdateError){
+      return res.status(401).json({message : 'error while updating leave approval'});
     }
-    if (updateResult.affectedRows === 0) {
-      logExecution('UpdateLeaveApproval', approvalId, 'ERROR', 'User not found');
-      return res.status(404).json({ message: 'User not found' });
-    }
-    const successMessage = `Leave ${action}ed successfully`;
-    logExecution('UpdateLeaveApproval', approvalId, 'SUCCESS', successMessage);
-    res.status(200).json({ message: successMessage });
+    return res.status(200).json({messsage : 'Leave Aproved'});
   });
 }
+
+function UpdateLeaveDeclined(req, res) {
+  const { leaveId } = req.params;
+
+  const updateLeaveQuery = `UPDATE intern_leave SET IsAproved = '0' WHERE LeaveId = ?`;
+
+  db.query(updateLeaveQuery, [leaveId], (leaveUpdateError, leaveUpdateResult) => {
+    if(leaveUpdateError){
+      return res.status(401).json({message : 'error while updating leave denial'});
+    }
+    return res.status(200).json({messsage : 'Leave Denied'});
+  });
+}
+
 
 function getAttendenceDetails(req, res) {
   const userQuery = 'SELECT * FROM hrms_users intern_attendence';
@@ -273,7 +269,7 @@ function getPendingLeaveInfo(req, res){
 
 function getAprovedLeaveInfo(req, res){
   
-  const leaveInfoQuery = `SELECT * FROM intern_leave WHERE IsApproved = 'approved' ORDER BY LeaveID DESC`;
+  const leaveInfoQuery = `SELECT * FROM intern_leave WHERE IsApproved = '1' ORDER BY LeaveID DESC`;
 
   try{
     db.query(leaveInfoQuery, (error ,result) => {
@@ -295,7 +291,7 @@ function getAprovedLeaveInfo(req, res){
 
 function getRejectedLeaveInfo(req, res){
   
-  const leaveInfoQuery = `SELECT * FROM intern_leave WHERE IsApproved = 'rejected' ORDER BY LeaveID DESC`;
+  const leaveInfoQuery = `SELECT * FROM intern_leave WHERE IsApproved = '0' ORDER BY LeaveID DESC`;
 
   try{
     db.query(leaveInfoQuery, (error ,result) => {
@@ -798,6 +794,7 @@ module.exports = {
   addUser,
   userdetails,
   UpdateLeaveApproval,
+  UpdateLeaveDeclined,
   getAttendenceDetails,
   getLeaveInfo,
   getPendingLeaveInfo,
