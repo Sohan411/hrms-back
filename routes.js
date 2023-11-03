@@ -51,5 +51,6 @@ router.post('/leave', dashboard.internLeave);
 router.post('/inTime/:userId', dashboard.inTime);
 router.put('/updateOutTime/:userId', dashboard.updateOutTime);
 router.post('/internInfo/:userId', dashboard.internInfo);
+router.post('/getTasksheetByUserId', dashboard.getTaskSheetByUserId);
 
 module.exports = router;
