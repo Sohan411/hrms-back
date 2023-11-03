@@ -159,10 +159,6 @@ function userdetails(req, res) {
   });
 }
 
-
-
-
-
 function deleteTask(req, res) {
   
   const taskId = req.params.taskId;
@@ -196,12 +192,12 @@ function deleteTask(req, res) {
 }
 
 function UpdateLeaveApproval(req, res) {
-  const { leaveId } = req.params;
+  const { leaveId } = req.params.leaveId;
 
   const updateLeaveQuery = `UPDATE intern_leave SET IsAproved = '1' WHERE LeaveId = ?`;
 
   db.query(updateLeaveQuery, [leaveId], (leaveUpdateError, leaveUpdateResult) => {
-    if(leaveUpdateError){
+    if(leaveUpdateError){     
       return res.status(401).json({message : 'error while updating leave approval'});
     }
     return res.status(200).json({messsage : 'Leave Aproved'});
@@ -209,7 +205,7 @@ function UpdateLeaveApproval(req, res) {
 }
 
 function UpdateLeaveDeclined(req, res) {
-  const { leaveId } = req.params;
+  const { leaveId } = req.params.leaveId;
 
   const updateLeaveQuery = `UPDATE intern_leave SET IsAproved = '0' WHERE LeaveId = ?`;
 
@@ -418,7 +414,6 @@ function getCompletedProject(req,res){
 
 function assignTask(req, res){
   
-  const projectId = req.params;
   const {
   employeeName,
   employeeEmail,
@@ -432,17 +427,7 @@ function assignTask(req, res){
   supervisorName,
 } = req.body;
 
-  const fetchProjectId = `SELECT * FORM project_details WHERE ProjectId = ?`;
-  const insertQuery = `INSERT INTO intern_tasksheet(EmployeeName, EmployeeEmail, SupervisorEmail, Status, Remark, StartDate, EndDate, Priority, ProjectId, ProjectTitle, SupervisorName) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-
-  db.query(fetchProjectId, [projectId], (fetcherror, fetchResult)  =>{ 
-    if(fetcherror){
-      return res.status(401).json({message : 'Error While Fetching Project ID'});
-    }
-    if(fetchResult.length === 0){
-      return res.status (404).json({message : 'No Projects Found'});
-    }
-    user = fetchResult.rows[0];
+  const insertQuery = `INSERT INTO intern_tasksheet(EmployeeName, EmployeeEmail, SupervisorEmail, Status, Remark, StartDate, EndDate, Priority, ProjectTitle, SupervisorName) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     db.query(insertQuery, [
       employeeName,
       employeeEmail,
@@ -452,8 +437,7 @@ function assignTask(req, res){
       startDate,
       endDate,
       priority,
-      user.ProjectId,
-      user.ProjectTitle,
+      projectTitle,
       supervisorName,
     ], (error, result)=>{
         if(error){
@@ -462,7 +446,6 @@ function assignTask(req, res){
         }
         return res.status(200).json({messgae : 'Task Updated Successfully'})
       });
-    });
 }
 
 function editTask(req, res){
