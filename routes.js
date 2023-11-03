@@ -22,8 +22,8 @@ router.put('/users/:UserId/block', authentication.Block);
 router.post('/addUser', sa.addUser);
 router.get('/getUserDetails', sa.userdetails);
 router.put('/usersLeave/:UserId', sa.UpdateLeaveApproval);
-router.post('/updateLeaveApproval',sa.UpdateLeaveApproval);
-router.post('/updateLeaveDeclined', sa.UpdateLeaveDeclined);
+router.put('/updateLeaveApproval',sa.UpdateLeaveApproval);
+router.put('/updateLeaveDeclined', sa.UpdateLeaveDeclined);
 router.get('/pendingLeaveInfo',sa.getPendingLeaveInfo);
 router.get('/approvedLeaveInfo',sa.getAprovedLeaveInfo);
 router.get('/rejectedLeaveInfo',sa.getRejectedLeaveInfo);
@@ -46,6 +46,7 @@ router.post('/createDivison', sa.createDivision);
 router.put('/updateDivison',sa.updateDivision);
 router.get('/getDivision',sa.getDivision);
 router.put('/editUser', sa.editUser);
+router.get('/getAttendenceDetails', sa.getAttendenceDetails);
 
 
 //Dashboard
