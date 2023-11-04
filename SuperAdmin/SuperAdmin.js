@@ -722,6 +722,30 @@ function getDivision(req,res){
 }
 
 
+function deleteEmployee(req, res) {
+  const userId = req.params.UserId;
+  const checkUserIdQuery = `SELECT * FROM hrms_users WHERE UserId = ?`;
+  const deleteQuery = 'DELETE FROM hrms_users WHERE userId = ?';
+  db.query(checkUserIdQuery, [userId], (error, checkResult) => {
+    if (error) {
+      return res.status(401).json({ message: 'Error during checking user id' });
+    }
+    if (checkResult.length === 0) {
+      return res.status(404).json({ message: 'No user found' });
+    }
+    try {
+      db.query(deleteQuery, [userId], (deleteError, deleteResult) => {
+        if (deleteError) {
+          return res.status(401).json({ message: 'Error during deleting' });
+        }
+        res.status(200).json({ message: 'User deleted successfully!' });
+      });
+    } catch (error) {
+      console.error('An error occurred:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+}
 function editUser(req, res){
   
   const userId = req.params.userId
@@ -797,6 +821,7 @@ module.exports = {
   deleteTask,
   createDivision,
   updateDivision,
+  deleteEmployee,
   // totalhourscount,
   getDesignation,
   deleteDivision,

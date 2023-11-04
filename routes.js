@@ -46,6 +46,7 @@ router.post('/createDivison', sa.createDivision);
 router.put('/updateDivison',sa.updateDivision);
 router.get('/getDivision',sa.getDivision);
 router.put('/editUser', sa.editUser);
+router.delete('/deleteEmployee/:UserId', sa.deleteEmployee);
 router.get('/getAttendenceDetails', sa.getAttendenceDetails);
 
 
