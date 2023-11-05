@@ -193,11 +193,11 @@ function deleteTask(req, res) {
 
 function UpdateLeaveApproval(req, res) {
   const  leaveId = req.params.leaveId;
-  const IsAproved = req.body;
+  const isApproved = req.body;
 
   const updateLeaveQuery = `UPDATE intern_leave SET IsAproved = ? WHERE LeaveId = ?`;
 
-  db.query(updateLeaveQuery, [IsAproved, leaveId], (leaveUpdateError, leaveUpdateResult) => {
+  db.query(updateLeaveQuery, [isApproved, leaveId], (leaveUpdateError, leaveUpdateResult) => {
     if(leaveUpdateError){     
       return res.status(401).json({message : 'error while updating leave approval'});
     }
@@ -788,7 +788,6 @@ module.exports = {
   addUser,
   userdetails,
   UpdateLeaveApproval,
-  UpdateLeaveDeclined,
   getAttendenceDetails,
   getLeaveInfo,
   getPendingLeaveInfo,
