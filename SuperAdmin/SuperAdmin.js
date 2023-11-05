@@ -195,10 +195,11 @@ function UpdateLeaveApproval(req, res) {
   const  leaveId = req.params.leaveId;
   const isApproved = req.body;
 
-  const updateLeaveQuery = `UPDATE intern_leave SET IsAproved = ? WHERE LeaveId = ?`;
+  const updateLeaveQuery = `UPDATE intern_leave SET IsAppfroved = ? WHERE LeaveId = ?`;
 
   db.query(updateLeaveQuery, [isApproved, leaveId], (leaveUpdateError, leaveUpdateResult) => {
     if(leaveUpdateError){     
+      console.log (leaveUpdateError)
       return res.status(401).json({message : 'error while updating leave approval'});
     }
     return res.status(200).json({messsage : 'Leave Aproved'});
