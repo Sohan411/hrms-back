@@ -46,6 +46,7 @@ router.post('/createDivison', sa.createDivision);
 router.put('/updateDivison',sa.updateDivision);
 router.get('/getDivision',sa.getDivision);
 router.put('/editUser/:userId', sa.editUser);
+router.delete('/deleteEmployee/:UserId', sa.deleteEmployee);
 router.get('/getAttendenceDetails', sa.getAttendenceDetails);
 
 
@@ -54,5 +55,6 @@ router.post('/leave', dashboard.internLeave);
 router.post('/inTime/:userId', dashboard.inTime);
 router.put('/updateOutTime/:userId', dashboard.updateOutTime);
 router.post('/internInfo/:userId', dashboard.internInfo);
+router.post('/getTasksheetByUserId', dashboard.getTaskSheetByUserId);
 
 module.exports = router;
