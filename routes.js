@@ -22,8 +22,8 @@ router.put('/users/:UserId/block', authentication.Block);
 router.post('/addUser', sa.addUser);
 router.get('/getUserDetails', sa.userdetails);
 router.put('/usersLeave/:UserId', sa.UpdateLeaveApproval);
-router.put('/updateLeaveApproval',sa.UpdateLeaveApproval);
-router.put('/updateLeaveDeclined', sa.UpdateLeaveDeclined);
+router.put('/updateLeaveApproval/:leaveId',sa.UpdateLeaveApproval);
+router.put('/updateLeaveDeclined/:leaveId', sa.UpdateLeaveDeclined);
 router.get('/pendingLeaveInfo',sa.getPendingLeaveInfo);
 router.get('/approvedLeaveInfo',sa.getAprovedLeaveInfo);
 router.get('/rejectedLeaveInfo',sa.getRejectedLeaveInfo);
@@ -38,14 +38,14 @@ router.get('/getSupervisorDetails', sa.getSupervisorDetails);
 router.get('/getEmployeesByProject', sa.getEmpolyeesByProject);
 router.get('/getProjects', sa.getProjectName);
 router.get('/getCompletedProjects', sa.getCompletedProject);
-router.put('/editTask', sa.editTask);
+router.put('/editTask/taskId', sa.editTask);
 router.delete('/deleteTask/:taskId', sa.deleteTask);
 router.delete('/deleteDivision/:divisionId', sa.deleteDivision);
 router.get('/getDesignation',sa.getDesignation);
 router.post('/createDivison', sa.createDivision);
 router.put('/updateDivison',sa.updateDivision);
 router.get('/getDivision',sa.getDivision);
-router.put('/editUser', sa.editUser);
+router.put('/editUser/:userId', sa.editUser);
 router.get('/getAttendenceDetails', sa.getAttendenceDetails);
 
 

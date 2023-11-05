@@ -445,12 +445,12 @@ function assignTask(req, res){
           return res.status(401).json({message : 'Error Inserting data'});
         }
         return res.status(200).json({messgae : 'Task Updated Successfully'})
-      });
+    });
 }
 
 function editTask(req, res){
   
-  const tasksheetId = req.params.tasksheetId
+  const taskId = req.params.tasksheetId
   const {
     employeeName,
     employeeEmail,
@@ -464,9 +464,10 @@ function editTask(req, res){
     supervisorName,
   } = req.body; 
 
-  const editTaskQuery = `UPDATE intern_tasksheet SET EmployeeName = ?, EmployeeEmail = ?, SupervisorEmail = ?, Status = ?, SupervisorEmail = ?, Priority = ?, StartDate = ?, EndDate = ?, Remark = ?, ProjectId = ?, SupervisorName = ?, ProjectTitle = ?`;
+  const editTaskQuery = `UPDATE intern_tasksheet SET EmployeeName = ?, EmployeeEmail = ?, SupervisorEmail = ?, Status = ?, SupervisorEmail = ?, Priority = ?, StartDate = ?, EndDate = ?, Remark = ?, ProjectId = ?, SupervisorName = ?, ProjectTitle = ? WHRER TaskSheetID = ?`;
 
   db.query(editTaskQuery, [
+    employeeName,
     employeeEmail,
     supervisorEmail,
     status,
@@ -475,7 +476,8 @@ function editTask(req, res){
     endDate,
     priority,
     projectTitle,
-    supervisorName], (updateError, updateResult) =>{
+    supervisorName,
+    taskId], (updateError, updateResult) =>{
       if(updateError){
         return res.status(401).json({message : 'Error Updating Task'});
       }
@@ -531,7 +533,7 @@ function getSupervisorDetails(req, res){
       }
       res.json({getSupervisiorDetails : internDetailsResult});
     });
-  }catch(errro){
+  }catch(error){
     res.status(500).json({message : 'Internal Server Error'});
   }
 }
@@ -737,37 +739,35 @@ function editUser(req, res){
     dob,
     totalWorkingDays,
     supervisor,
-    joiningDate,
-    verified,
-    block,
-    verificationToken,
     division,
   } = req.body; 
 
-  const editUserQuery = `UPDATE hrms_users SET Username = ?, FirstName = ?, LastName = ?, Password = ?, ContactNo = ?, Designation = ?, UserType = ?, DOB = ?, TotalWorkingDays = ?, Supervisor = ?, JoiningDate = ?, Verified = ?, block = ?, VerificationToken = ?, Division = ? WHERE UserId = ?`;
+  const editUserQuery = `UPDATE hrms_users SET Username = ?, FirstName = ?, LastName = ?, Password = ?, ContactNo = ?, Designation = ?, DOB = ?, TotalWorkingDays = ?, Supervisor = ?, Verified = ?, block = ?, Division = ? WHERE UserId = ?`;
 
-  db.query(editUserQuery, [
-    userName,
-    firstName,
-    lastName,
-    password,
-    companyEmail,
-    contactNo,
-    designation,
-    userType,  
-    dob,
-    totalWorkingDays,
-    supervisor,
-    joiningDate,
-    verified,
-    block,
-    verificationToken,
-    division, 
-    userId ], (updateError, updateResult) =>{
-      if(updateError){
-        return res.status(401).json({message : 'Error Updating Task'});
-      }
-      return res.status(200).json({message : 'Updated Successfully'});
+  bcrypt.hash(password, 10, (hashError, hashedPassword) => {
+    db.query(editUserQuery, [
+      userName,
+      firstName,
+      lastName,
+      hashedPassword,
+      companyEmail,
+      contactNo,
+      designation,
+      userType,  
+      dob,
+      totalWorkingDays,
+      supervisor,
+      joiningDate,
+      verified,
+      block,
+      verificationToken,
+      division, 
+      userId ], (updateError, updateResult) =>{
+        if(updateError){
+          return res.status(401).json({message : 'Error Updating Task'});
+        }
+        return res.status(200).json({message : 'Updated Successfully'});
+      });
     });
 }
 
