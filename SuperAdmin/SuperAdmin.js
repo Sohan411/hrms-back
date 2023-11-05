@@ -192,31 +192,18 @@ function deleteTask(req, res) {
 }
 
 function UpdateLeaveApproval(req, res) {
-  const { leaveId } = req.params.leaveId;
+  const  leaveId = req.params.leaveId;
+  const IsAproved = req.body;
 
-  const updateLeaveQuery = `UPDATE intern_leave SET IsAproved = '1' WHERE LeaveId = ?`;
+  const updateLeaveQuery = `UPDATE intern_leave SET IsAproved = ? WHERE LeaveId = ?`;
 
-  db.query(updateLeaveQuery, [leaveId], (leaveUpdateError, leaveUpdateResult) => {
+  db.query(updateLeaveQuery, [IsAproved, leaveId], (leaveUpdateError, leaveUpdateResult) => {
     if(leaveUpdateError){     
       return res.status(401).json({message : 'error while updating leave approval'});
     }
     return res.status(200).json({messsage : 'Leave Aproved'});
   });
 }
-
-function UpdateLeaveDeclined(req, res) {
-  const { leaveId } = req.params.leaveId;
-
-  const updateLeaveQuery = `UPDATE intern_leave SET IsAproved = '0' WHERE LeaveId = ?`;
-
-  db.query(updateLeaveQuery, [leaveId], (leaveUpdateError, leaveUpdateResult) => {
-    if(leaveUpdateError){
-      return res.status(401).json({message : 'error while updating leave denial'});
-    }
-    return res.status(200).json({messsage : 'Leave Denied'});
-  });
-}
-
 
 function getAttendenceDetails(req, res) {
   const userQuery = 'SELECT * FROM hrms_users intern_attendence';
@@ -265,7 +252,7 @@ function getPendingLeaveInfo(req, res){
 
 function getAprovedLeaveInfo(req, res){
   
-  const leaveInfoQuery = `SELECT * FROM intern_leave WHERE IsApproved = '1' ORDER BY LeaveID DESC`;
+  const leaveInfoQuery = `SELECT * FROM intern_leave WHERE IsApproved = 'Approved' ORDER BY LeaveID DESC`;
 
   try{
     db.query(leaveInfoQuery, (error ,result) => {
@@ -287,7 +274,7 @@ function getAprovedLeaveInfo(req, res){
 
 function getRejectedLeaveInfo(req, res){
   
-  const leaveInfoQuery = `SELECT * FROM intern_leave WHERE IsApproved = '0' ORDER BY LeaveID DESC`;
+  const leaveInfoQuery = `SELECT * FROM intern_leave WHERE IsApproved = 'Declined' ORDER BY LeaveID DESC`;
 
   try{
     db.query(leaveInfoQuery, (error ,result) => {

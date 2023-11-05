@@ -23,7 +23,6 @@ router.post('/addUser', sa.addUser);
 router.get('/getUserDetails', sa.userdetails);
 router.put('/usersLeave/:UserId', sa.UpdateLeaveApproval);
 router.put('/updateLeaveApproval/:leaveId',sa.UpdateLeaveApproval);
-router.put('/updateLeaveDeclined/:leaveId', sa.UpdateLeaveDeclined);
 router.get('/pendingLeaveInfo',sa.getPendingLeaveInfo);
 router.get('/approvedLeaveInfo',sa.getAprovedLeaveInfo);
 router.get('/rejectedLeaveInfo',sa.getRejectedLeaveInfo);
