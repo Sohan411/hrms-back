@@ -159,6 +159,27 @@ function userdetails(req, res) {
   });
 }
 
+function getUserDetailsByUserId(req, res) {
+  const userQuery = 'SELECT UserId, Username, FirstName, LastName, ContactNo , Designation, CompanyEmail, DOB, TotalWorkingDays, Supervisor FROM hrms_users';
+
+  const userId = req.params.userId;
+
+  db.query(userQuery, [userId],(error, userResult) => {
+    if (error) {
+      console.error('Error fetching user details:', error);
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+
+    if (userResult.length === 0) {
+      console.log('users not found!');
+      return res.status(404).json({ message: 'users not found!' });
+    }
+
+    const users = userResult;
+    res.json({ getUserDetailsByUserId : users });
+  });
+}
+
 function deleteTask(req, res) {
   
   const taskId = req.params.taskId;
@@ -195,7 +216,7 @@ function UpdateLeaveApproval(req, res) {
   const  leaveId = req.params.leaveId;
   const isApproved = req.body;
 
-  const updateLeaveQuery = `UPDATE intern_leave SET IsAppfroved = ? WHERE LeaveId = ?`;
+  const updateLeaveQuery = `UPDATE intern_leave SET IsApproved = ? WHERE LeaveId = ?`;
 
   db.query(updateLeaveQuery, [isApproved, leaveId], (leaveUpdateError, leaveUpdateResult) => {
     if(leaveUpdateError){     
@@ -814,7 +835,7 @@ module.exports = {
   deleteDivision,
   getDivision,
   editUser,
-
+  getUserDetailsByUserId,
 
 
 };

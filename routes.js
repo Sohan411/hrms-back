@@ -47,6 +47,8 @@ router.get('/getDivision',sa.getDivision);
 router.put('/editUser/:userId', sa.editUser);
 router.delete('/deleteEmployee/:UserId', sa.deleteEmployee);
 router.get('/getAttendenceDetails', sa.getAttendenceDetails);
+router.get('/getUserDetailsByUserId/:userId', sa.getUserDetailsByUserId);
+
 
 
 //Dashboard
