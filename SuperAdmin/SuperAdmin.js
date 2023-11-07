@@ -160,7 +160,7 @@ function userdetails(req, res) {
 }
 
 function getUserDetailsByUserId(req, res) {
-  const userQuery = 'SELECT UserId, Username, FirstName, LastName, ContactNo , Designation, CompanyEmail, DOB, TotalWorkingDays, Supervisor FROM hrms_users';
+  const userQuery = 'SELECT UserId, Username, FirstName, LastName, ContactNo , Designation, CompanyEmail, DOB, TotalWorkingDays, Supervisor FROM hrms_users WHERE UserId = ?';
 
   const userId = req.params.userId;
 
