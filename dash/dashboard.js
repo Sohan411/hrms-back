@@ -64,22 +64,57 @@ function internLeave(req, res) {
 }
 
 function inTime(req, res) {
-  const  userId = req.params.userId;
-  const { currentDate = new Date() } = req.body;
+  const userId = req.body.userId;
+  const currentDate = new Date();
+  const formattedTime = currentDate.toLocaleTimeString('en-US', { hour12: false });
+  const formattedInTime = formattedTime;
 
-  const fetchUserId = `SELECT * FROM hrms_users WHERE UserId = ?`;
-  const insertAttendanceQuery = `INSERT INTO intern_attendence(UserId, Date, inTime) VALUES (?, ?, ?)`;
+  const fetchUserId = 'SELECT * FROM hrms_users WHERE UserId = ?';
+  const checkAttendanceQuery = 'SELECT * FROM intern_attendence WHERE UserId = ? AND Date = ?';
+  const insertAttendanceQuery = 'INSERT INTO intern_attendence(UserId, InTime, Date) VALUES (?, ?, ?)';
 
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth() + 1;
-  const day = currentDate.getDate();
+  db.query(fetchUserId, [userId], (userIdError, userResult) => {
+    if (userIdError) {
+      console.error(userIdError);
+      return res.status(401).json({ message: 'Internal server error while fetching user' });
+    }
 
-  const hours = currentDate.getHours();
-  const minutes = currentDate.getMinutes();
-  const seconds = currentDate.getSeconds();
+    if (userResult.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
 
-  const formattedDate = `${year}-${month}-${day}`;
-  const formattedInTime = `${formattedDate} ${hours}:${minutes}:${seconds}`;
+    const formattedDate = currentDate.toISOString().split('T')[0];
+    db.query(checkAttendanceQuery, [userId, formattedDate], (checkError, checkResult) => {
+      if (checkError) {
+        console.error(checkError);
+        return res.status(500).json({ message: 'Internal server error while checking attendance' });
+      }
+
+      if (checkResult.length > 0) {
+        return res.status(400).json({ message: 'Attendance already marked for today' });
+      }
+
+      db.query(insertAttendanceQuery, [userId, formattedInTime, formattedDate], (insertError, insertResult) => {
+        if (insertError) {
+          console.error(insertError);
+          return res.status(500).json({ message: 'Internal server error while inserting attendance' });
+        }
+        return res.status(200).json({ message: 'Attendance marked' });
+      });
+    });
+  });
+}
+
+
+function outTime(req, res) {
+  const userId = req.body.userId;
+  const currentDate = new Date();
+  const formattedTime = currentDate.toLocaleTimeString('en-US', { hour12: false });
+  const formattedOutTime = formattedTime;
+
+  const fetchUserId = 'SELECT * FROM hrms_users WHERE UserId = ?';
+  const checkAttendanceQuery = 'SELECT * FROM intern_attendence WHERE UserId = ? AND Date = ?';
+  const updateAttendanceQuery = 'UPDATE intern_attendence SET OutTime = ?, TotalHours = ? WHERE UserId = ? AND Date = ?';
 
   // Check if the user exists in the hrms_users table
   db.query(fetchUserId, [userId], (userIdError, userResult) => {
@@ -89,68 +124,38 @@ function inTime(req, res) {
     }
 
     if (userResult.length === 0) {
-      // console.log(userResult);
       return res.status(404).json({ message: 'User not found' });
     }
-    // If the user exists, insert attendance record
-    db.query(insertAttendanceQuery, [userId, formattedDate, formattedInTime ], (insertError, insertResult) => {
-      if (insertError) {
-        console.error(insertError);
-        return res.status(500).json({ message: 'Internal server error while inserting attendance' });
+
+    // Check if attendance has already been marked for the user on the current date
+    const formattedDate = currentDate.toISOString().split('T')[0];
+    db.query(checkAttendanceQuery, [userId, formattedDate], (checkError, checkResult) => {
+      if (checkError) {
+        console.error(checkError);
+        return res.status(500).json({ message: 'Internal server error while checking attendance' });
       }
-      return res.status(200).json({ message: 'Attendance marked'});
-    });
-  });
-}
 
-function updateOutTime (req, res){
-  const userId = req.params.userId;
-  const {currentDate = new Date()} = req.body;
-
-  const fetchUserId = `SELECT * FROM hrms_users WHERE UserId = ?`;
-  const updateOutTime = `UPDATE intern_attendence SET OutTime = ? WHERE UserId = ?`;
-
-
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth() + 1;
-  const day = currentDate.getDate();
-
-  const hours = currentDate.getHours();
-  const minutes = currentDate.getMinutes();
-  const seconds = currentDate.getSeconds();
-
-
-  const formattedDate = `${year}-${month}-${day}`;
-  const formattedOutTime = `${formattedDate} ${hours}:${minutes}:${seconds}`;
-
-  db.query(fetchUserId, [userId], (error, fetchResult) => {
-    if(error){
-      return res.status(401).json({message : 'error while checking userid'});
-    }
-    if (fetchResult.length === 0) {
-      console.log(fetchResult);
-      return res.status(404).json({ message: 'User not found' });
-    }
-    db.query(updateOutTime , [formattedOutTime, userId] ,(err, updateResult) => {
-      if(err){
-        console.log(err);
-        return res.status(401).json({message : 'error while updating'})
+      if (checkResult.length === 0) {
+        return res.status(400).json({ message: 'InTime not marked for today. Please mark InTime first.' });
       }
-      updateTotalHours();
-      return res.status(200).json({message : 'Out Time Marked Successfully'});
-    });
-  });
-}
 
-function updateTotalHours() {
-  const query = 'UPDATE intern_attendence SET TotalHours = TIMESTAMPDIFF(SECOND, InTime, OutTime) / 3600 WHERE DATE(InTime) = DATE(OutTime)';
-  
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error('Error updating TotalHours:', err);
-    } else {
-      console.log('TotalHours updated successfully.');
-    }
+      if (checkResult[0].OutTime) {
+        return res.status(400).json({ message: 'OutTime already marked for today' });
+      }
+      const formattedInTime = checkResult[0].InTime;
+      const inDateTime = new Date(`1970-01-01T${formattedInTime}`);
+      const outDateTime = new Date(`1970-01-01T${formattedOutTime}`);
+      const timeDifference = (outDateTime - inDateTime) / (1000 * 60);
+      const totalHours = `${Math.floor(timeDifference / 60)}:${timeDifference % 60}`;
+
+      db.query(updateAttendanceQuery, [formattedOutTime, totalHours, userId, formattedDate], (updateError, updateResult) => {
+        if (updateError) {
+          console.error(updateError);
+          return res.status(500).json({ message: 'Internal server error while updating attendance' });
+        }
+        return res.status(200).json({ message: 'OutTime marked and TotalHours updated' });
+      });
+    });
   });
 }
 
@@ -248,7 +253,7 @@ function getTaskSheetByUserId(req, res) {
 module.exports = {
   internLeave,
   inTime,
-  updateOutTime,
+  outTime,
   internInfo,
   getTaskSheetByUserId,
 }

@@ -29,7 +29,7 @@ router.get('/rejectedLeaveInfo',sa.getRejectedLeaveInfo);
 router.get('/getLeaveInfo/:leaveID', sa.getLeaveInfo);
 router.get('/getLeaveByDate', sa.getLeaveInfoByDate);
 router.get('/getLeaveByUserID/:userId', sa.getLeaveByUserId);
-router.post('/acceptAttendence/:userId', sa.acceptAttendence);
+router.post('/acceptAttendence', sa.acceptAttendence);
 router.post('/assignTask',sa.assignTask);
 router.get('/getTaskSheet',sa.getTaskSheet);
 router.get('/getInternDetails', sa.getInternDetails);
@@ -53,8 +53,8 @@ router.get('/getUserDetailsByUserId/:userId', sa.getUserDetailsByUserId);
 
 //Dashboard
 router.post('/leave', dashboard.internLeave);
-router.post('/inTime/:userId', dashboard.inTime);
-router.put('/updateOutTime/:userId', dashboard.updateOutTime);
+router.post('/inTime', dashboard.inTime);
+router.put('/outTime', dashboard.outTime);
 router.post('/internInfo/:userId', dashboard.internInfo);
 router.post('/getTasksheetByUserId', dashboard.getTaskSheetByUserId);
 
