@@ -64,14 +64,14 @@ function internLeave(req, res) {
 }
 
 function inTime(req, res) {
-  const { userId } = req.body;
+  const userId = req.params.userId;
   const currentDate = new Date();
   const formattedTime = currentDate.toLocaleTimeString('en-US', { hour12: false });
   const formattedInTime = formattedTime;
 
   const fetchUserId = 'SELECT * FROM hrms_users WHERE UserId = ?';
   const checkAttendanceQuery = 'SELECT * FROM intern_attendence WHERE UserId = ? AND Date = ?';
-  const insertAttendanceQuery = 'INSERT INTO intern_attendence(UserId, InTime, Date) VALUES (?, ?, ?)';
+  const insertAttendanceQuery = 'INSERT INTO intern_attendence(UserId, InTime, Date, Attendence) VALUES (?, ?, ?, 1)';
 
   db.query(fetchUserId, [userId], (userIdError, userResult) => {
     if (userIdError) {
@@ -108,7 +108,7 @@ function inTime(req, res) {
 
 
 function outTime(req, res) {
-  const userId = req.body.userId;
+  const userId = req.params.userId;
   const currentDate = new Date();
   const formattedTime = currentDate.toLocaleTimeString('en-US', { hour12: false });
   const formattedOutTime = formattedTime;
@@ -249,7 +249,34 @@ function getTaskSheetByUserId(req, res) {
   });
 }
 
+function getInternInfo(req, res) {
+  const userId = req.params.userId;
+  const currentDate = new Date();
+  const formattedDate = currentDate.toISOString().split('T')[0];
 
+  const fetchInternInfoQuery = 'SELECT * FROM intern_attendence WHERE UserId = ? AND Date = ?';
+
+  db.query(fetchInternInfoQuery, [userId, formattedDate], (queryError, queryResult) => {
+    if (queryError) {
+      console.error(queryError);
+      return res.status(500).json({ message: 'Internal server error while fetching intern information' });
+    }
+
+    if (queryResult.length === 0) {
+      return res.status(200).json({ message: 'Intern absent for today' });
+    }
+    const internInfo = {
+      userId: queryResult[0].UserId,
+      inTime: queryResult[0].InTime,
+      outTime: queryResult[0].OutTime,
+      totalHours: queryResult[0].TotalHours,
+      attendance: queryResult[0].Attendence,
+      date: queryResult[0].Date,
+    };
+
+    return res.status(200).json({ message: 'Intern information for today', internInfo });
+  });
+}
 
 module.exports = {
   internLeave,
@@ -257,4 +284,5 @@ module.exports = {
   outTime,
   internInfo,
   getTaskSheetByUserId,
+  getInternInfo
 }
