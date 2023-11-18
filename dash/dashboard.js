@@ -64,7 +64,7 @@ function internLeave(req, res) {
 }
 
 function inTime(req, res) {
-  const userId = req.body.userId;
+  const { userId } = req.body;
   const currentDate = new Date();
   const formattedTime = currentDate.toLocaleTimeString('en-US', { hour12: false });
   const formattedInTime = formattedTime;
@@ -104,6 +104,7 @@ function inTime(req, res) {
     });
   });
 }
+
 
 
 function outTime(req, res) {
