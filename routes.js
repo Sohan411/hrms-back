@@ -53,8 +53,8 @@ router.get('/getUserDetailsByUserId/:userId', sa.getUserDetailsByUserId);
 
 //Dashboard
 router.post('/leave', dashboard.internLeave);
-router.post('/inTime/:userId', dashboard.inTime);
-router.post('/outTime/:userId', dashboard.outTime);
+router.post('/inTime', dashboard.inTime);
+router.post('/outTime', dashboard.outTime);
 router.post('/internInfo/:userId', dashboard.internInfo);
 router.post('/getTasksheetByUserId', dashboard.getTaskSheetByUserId);
 router.get('/getInternInfo/:userId',dashboard.getInternInfo);
