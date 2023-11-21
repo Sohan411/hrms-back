@@ -108,7 +108,7 @@ function inTime(req, res) {
 
 
 function outTime(req, res) {
-  const userId = req.params.userId;
+  const userId = req.body.userId;
   const currentDate = new Date();
   const formattedTime = currentDate.toLocaleTimeString('en-US', { hour12: false });
   const formattedOutTime = formattedTime;
