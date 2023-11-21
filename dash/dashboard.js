@@ -64,14 +64,14 @@ function internLeave(req, res) {
 }
 
 function inTime(req, res) {
-  const userId = req.body.userId;
+  const userId = req.params.userId;
   const currentDate = new Date();
   const formattedTime = currentDate.toLocaleTimeString('en-US', { hour12: false });
   const formattedInTime = formattedTime;
 
   const fetchUserId = 'SELECT * FROM hrms_users WHERE UserId = ?';
   const checkAttendanceQuery = 'SELECT * FROM intern_attendence WHERE UserId = ? AND Date = ?';
-  const insertAttendanceQuery = 'INSERT INTO intern_attendence(UserId, InTime, Date) VALUES (?, ?, ?)';
+  const insertAttendanceQuery = 'INSERT INTO intern_attendence(UserId, InTime, Date, Attendence) VALUES (?, ?, ?, 1)';
 
   db.query(fetchUserId, [userId], (userIdError, userResult) => {
     if (userIdError) {
