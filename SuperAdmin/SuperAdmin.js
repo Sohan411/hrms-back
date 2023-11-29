@@ -373,25 +373,43 @@ function getLeaveByUserId(req , res){
 }
 
 function acceptAttendence(req, res){
-  const { userId } = req.params.userId;
-  const userIdCheckQuery = `Select * FROM hrms_users WHERE UserId = ?`
-  const accpetQuery = `INSERT INTO intern_attendence(Attendence) VALUES(?)`;
-
-  db.query(userIdCheckQuery, [userId],(error, checkResult) =>{
-    if(error){
-      return res.status(401).json({ message : 'Error Checking UserId' });
+  const userId = req.body.UserId;
+  
+    if (!userId) {
+      return res.status(400).json({ success: false, message: 'UserId is required in the params' });
     }
-    if(checkResult.length === 0){
-      return res.status(404).json({ message : 'User Not Found' });
-    }
-    db.query(accpetQuery, ['1', userId], (error, result) => {
-      if(error){
-        return res.status(401).json({ message : 'Error Marking Attendence'});
+  
+    const today = new Date();
+    const formattedDate = today.toISOString().split('T')[0]; 
+  
+    const checkEntryQuery = 'SELECT * FROM intern_attendence WHERE UserId = ? AND DATE(InTime) = ?';
+    const updateQuery = 'UPDATE intern_attendence SET Attendence = 1 WHERE UserId = ? AND DATE(InTime) = ?';
+  
+    db.query(checkEntryQuery, [userId, formattedDate], (checkError, checkResult) => {
+      if (checkError) {
+        console.error('Error checking entry:', checkError);
+        return res.status(500).json({ success: false, message: 'Internal server error' });
       }
-      return res.status(200).json({ message : 'Attendence Marked Successfully' });
+  
+      if (checkResult.length === 0) {
+        return res.status(404).json({ success: false, message: 'Intern not present today' });
+      }
+
+      db.query(updateQuery, [userId, formattedDate], (updateError, result) => {
+        if (updateError) {
+          console.error('Error updating attendance:', updateError);
+          return res.status(500).json({ success: false, message: 'Internal server error' });
+        }
+  
+        if (result.affectedRows === 0) {
+          return res.status(404).json({ success: false, message: 'No matching record found for the given UserId and InTime' });
+        }
+  
+        return res.json({ success: true, message: 'Attendance updated successfully!' });
+      });
     });
-  }); 
-}
+  }
+  
 
 function getProjectName(req,res){
   const fetchQuery = `SELECT * FROM project_details WHERE Status = 'OnGoing'`;

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const authentication = require('./Authentication/authentication');
 const sa = require('./SuperAdmin/SuperAdmin');
-const dashboard = require('./Dash/dashboard');
+const dashboard = require('./dash/dashboard');
 
 
 // Registration route
@@ -29,7 +29,7 @@ router.get('/rejectedLeaveInfo',sa.getRejectedLeaveInfo);
 router.get('/getLeaveInfo/:leaveID', sa.getLeaveInfo);
 router.get('/getLeaveByDate', sa.getLeaveInfoByDate);
 router.get('/getLeaveByUserID/:userId', sa.getLeaveByUserId);
-router.post('/acceptAttendence/:userId', sa.acceptAttendence);
+router.post('/acceptAttendence', sa.acceptAttendence);
 router.post('/assignTask',sa.assignTask);
 router.get('/getTaskSheet',sa.getTaskSheet);
 router.get('/getInternDetails', sa.getInternDetails);
@@ -53,9 +53,10 @@ router.get('/getUserDetailsByUserId/:userId', sa.getUserDetailsByUserId);
 
 //Dashboard
 router.post('/leave', dashboard.internLeave);
-router.post('/inTime/:userId', dashboard.inTime);
-router.put('/updateOutTime/:userId', dashboard.updateOutTime);
+router.post('/inTime', dashboard.inTime);
+router.post('/outTime', dashboard.outTime);
 router.post('/internInfo/:userId', dashboard.internInfo);
 router.post('/getTasksheetByUserId', dashboard.getTaskSheetByUserId);
+router.get('/getInternInfo/:userId',dashboard.getInternInfo);
 
 module.exports = router;
